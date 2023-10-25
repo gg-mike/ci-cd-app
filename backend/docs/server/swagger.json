@@ -1,0 +1,11 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Server for CI/CD application developed using Go (Gin, Gorm).",
+        "title": "CI/CD Application - Server API",
+        "contact": {},
+        "version": "1.0.0"
+    },
+    "basePath": "/api",
+    "paths": {}
+}

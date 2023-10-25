@@ -1,0 +1,8 @@
+basePath: /api
+info:
+  contact: {}
+  description: Server for CI/CD application developed using Go (Gin, Gorm).
+  title: CI/CD Application - Server API
+  version: 1.0.0
+paths: {}
+swagger: "2.0"
