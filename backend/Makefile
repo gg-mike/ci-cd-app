@@ -19,4 +19,4 @@ test:
 	go test -v ${TEST_PKG}
 
 test-app:
-	go test -v (go list ./... | grep -E "(cmd/${APP}|internal)")
+	go test -v ./cmd/${APP}/... ./internal/...
