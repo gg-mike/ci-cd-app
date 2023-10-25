@@ -6,10 +6,10 @@ import (
 )
 
 func GetEnvWithFallback(key, fallback string) string {
-  if value, ok := os.LookupEnv(key); ok {
-      return value
-  }
-  return fallback
+	if value, ok := os.LookupEnv(key); ok {
+			return value
+	}
+	return fallback
 }
 
 func GetRequiredEnv(key string) (string, error) {

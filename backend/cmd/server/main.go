@@ -14,13 +14,13 @@ import (
 
 func init() {
 	if err := godotenv.Load(); err != nil {
-    logger.Basic(zerolog.WarnLevel, "main").Msgf("Missing .env file")
-  }
+		logger.Basic(zerolog.WarnLevel, "main").Msgf("Missing .env file")
+	}
 
 	gin.SetMode(gin.ReleaseMode)
 
 	logDir := sys.GetEnvWithFallback("LOGS", "./logs")
-  logger.MultiOutput(logDir)
+	logger.MultiOutput(logDir)
 }
 
 // @title       CI/CD Application - Server API
@@ -34,19 +34,19 @@ func main() {
 	port := sys.GetEnvWithFallback("PORT", "8080")
 
 	r := gin.New()
-  r.Use(logger.Gin())
-  r.Use(gin.Recovery())
+	r.Use(logger.Gin())
+	r.Use(gin.Recovery())
 
-  rg := r.Group("/api")
-  rg.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-  logger.
-    Basic(zerolog.InfoLevel, "main").
-    Msgf("API documentation available at http://localhost:%s/api/docs/index.html", port)
+	rg := r.Group("/api")
+	rg.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	logger.
+		Basic(zerolog.InfoLevel, "main").
+		Msgf("API documentation available at http://localhost:%s/api/docs/index.html", port)
 
-  rg.GET("/healthz", controllers.Healthz)
-  rg.GET("/readyz", probe.Readyz)
+	rg.GET("/healthz", controllers.Healthz)
+	rg.GET("/readyz", probe.Readyz)
 
-  probe.Ready()
+	probe.Ready()
 
-  r.Run()
+	r.Run()
 }

@@ -6,7 +6,7 @@ import (
 
 func TestGetEnvWithFallback(t *testing.T) {
 	type fields struct {
-		key 		 string
+		key      string
 		fallback string
 	}
 	tests := []struct {
@@ -24,7 +24,7 @@ func TestGetEnvWithFallback(t *testing.T) {
 				t.Setenv(tt.args.key, tt.want)
 			}
 			if got := GetEnvWithFallback(tt.args.key, tt.args.fallback); got != tt.want {
-				t.Errorf("GetEnvWithFallback() = %v, want %v", got, tt.want)
+				t.Errorf("value\nactual: %v\nexpect: %v", got, tt.want)
 			}
 		})
 	}
@@ -34,7 +34,7 @@ func TestGetRequiredEnv(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    string
-		isEnv 	bool
+		isEnv   bool
 		want    string
 		wantErr bool
 	}{
@@ -48,11 +48,11 @@ func TestGetRequiredEnv(t *testing.T) {
 			}
 			got, err := GetRequiredEnv(tt.args)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("GetRequiredEnv() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("error\nactual: %v\nexpect: %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("GetRequiredEnv() = %v, want %v", got, tt.want)
+				t.Errorf("value\nactual: %v\nexpect: %v", got, tt.want)
 			}
 		})
 	}
