@@ -13,16 +13,18 @@ import (
 // @Tags     pipelines
 // @Accept   json
 // @Produce  json
-// @Param    page     query int                false "Page number"
-// @Param    size     query int                false "Page size"
-// @Param    order    query string             false "Order by field"
-// @Param    pipeline body  model.PipelineCore false "Filter"
+// @Param    page       query int    false "Page number"
+// @Param    size       query int    false "Page size"
+// @Param    order      query string false "Order by field"
+// @Param    name       query string false "Pipeline name (pattern)"
+// @Param    branch     query string false "Pipeline branch (pattern)"
+// @Param    project_id query string false "Pipeline project ID (exact)"
 // @Success  200 {object} []model.PipelineShort "List of pipelines"
 // @Failure  400 {object} util.Message          "Error in request"
 // @Failure  404 {object} util.Message          "No records found"
 // @Failure  500 {object} util.Message          "Database error"
 // @Router   /pipelines [get]
-func allPipelines(dao dao.DAO[model.Pipeline, model.PipelineCore, model.PipelineCreate, model.PipelineShort]) gin.HandlerFunc { return dao.GetMany }
+func allPipelines(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFunc { return dao.GetMany }
 
 // @Summary  Create new pipeline
 // @ID       create-pipeline
@@ -34,7 +36,7 @@ func allPipelines(dao dao.DAO[model.Pipeline, model.PipelineCore, model.Pipeline
 // @Failure  400 {object} util.Message   "Error in params"
 // @Failure  501 {object} util.Message   "Endpoint not implemented"
 // @Router   /pipelines [post]
-func createPipeline(dao dao.DAO[model.Pipeline, model.PipelineCore, model.PipelineCreate, model.PipelineShort]) gin.HandlerFunc { return dao.Create }
+func createPipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFunc { return dao.Create }
 
 // @Summary  Get the single pipeline
 // @ID       single-pipeline
@@ -46,7 +48,7 @@ func createPipeline(dao dao.DAO[model.Pipeline, model.PipelineCore, model.Pipeli
 // @Failure  404 {object} util.Message   "No record found"
 // @Failure  500 {object} util.Message   "Database error"
 // @Router   /pipelines/{id} [get]
-func getPipeline(dao dao.DAO[model.Pipeline, model.PipelineCore, model.PipelineCreate, model.PipelineShort]) gin.HandlerFunc { return dao.GetOne }
+func getPipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFunc { return dao.GetOne }
 
 // @Summary  Update pipeline
 // @ID       update-pipeline
@@ -59,18 +61,19 @@ func getPipeline(dao dao.DAO[model.Pipeline, model.PipelineCore, model.PipelineC
 // @Failure  400 {object} util.Message   "Error in params"
 // @Failure  501 {object} util.Message   "Endpoint not implemented"
 // @Router   /pipelines/{id} [put]
-func updatePipeline(dao dao.DAO[model.Pipeline, model.PipelineCore, model.PipelineCreate, model.PipelineShort]) gin.HandlerFunc { return dao.Update }
+func updatePipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFunc { return dao.Update }
 
 // @Summary  Delete pipeline
 // @ID       delete-pipeline
 // @Tags     pipelines
 // @Produce  json
-// @Param    id path string true "Pipeline ID"
+// @Param    id    path  string  true  "Pipeline ID"
+// @Param    force query boolean false "Force deletion"
 // @Success  200 {object} util.Message "Delete message"
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
 // @Router   /pipelines/{id} [delete]
-func deletePipeline(dao dao.DAO[model.Pipeline, model.PipelineCore, model.PipelineCreate, model.PipelineShort]) gin.HandlerFunc { return dao.Delete }
+func deletePipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFunc { return dao.Delete }
 
 func InitPipelineGroup(db *gorm.DB, rg *gin.RouterGroup) {
 	dao := controller.InitPipelineDAO(db)

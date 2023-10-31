@@ -22,6 +22,17 @@ services:
     volumes:
       - ./servers.json:/pgadmin4/servers.json
       - pgadmin-data:/var/lib/pgadmin
+  vault:
+    image: hashicorp/vault
+    ports:
+      - 8200:8200
+    volumes:
+      - private-volume:/vault/file:rw
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=dev-only-token
+    cap_add:
+      - IPC_LOCK
 volumes:
   postgres-data:
   pgadmin-data:
+  private-volume:

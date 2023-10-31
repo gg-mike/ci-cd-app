@@ -13,16 +13,18 @@ import (
 // @Tags     builds
 // @Accept   json
 // @Produce  json
-// @Param    page  query int             false "Page number"
-// @Param    size  query int             false "Page size"
-// @Param    order query string          false "Order by field"
-// @Param    build body  model.BuildCore false "Filter"
+// @Param    page        query int    false "Page number"
+// @Param    size        query int    false "Page size"
+// @Param    order       query string false "Order by field"
+// @Param    status      query []int  false "Build status (possible values)"
+// @Param    worker_id   query string false "Build worker ID (exact)"
+// @Param    pipeline_id query string false "Build pipeline ID (exact)"
 // @Success  200 {object} []model.BuildShort "List of builds"
 // @Failure  400 {object} util.Message       "Error in request"
 // @Failure  404 {object} util.Message       "No records found"
 // @Failure  500 {object} util.Message       "Database error"
 // @Router   /builds [get]
-func allBuilds(dao dao.DAO[model.Build, model.BuildCore, model.BuildCreate, model.BuildShort]) gin.HandlerFunc { return dao.GetMany }
+func allBuilds(dao dao.DAO[model.Build, model.BuildShort]) gin.HandlerFunc { return dao.GetMany }
 
 // @Summary  Create new build
 // @ID       create-build
@@ -34,7 +36,7 @@ func allBuilds(dao dao.DAO[model.Build, model.BuildCore, model.BuildCreate, mode
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
 // @Router   /builds [post]
-func createBuild(dao dao.DAO[model.Build, model.BuildCore, model.BuildCreate, model.BuildShort]) gin.HandlerFunc { return dao.Create }
+func createBuild(dao dao.DAO[model.Build, model.BuildShort]) gin.HandlerFunc { return dao.Create }
 
 // @Summary  Get the single build
 // @ID       single-build
@@ -46,7 +48,7 @@ func createBuild(dao dao.DAO[model.Build, model.BuildCore, model.BuildCreate, mo
 // @Failure  404 {object} util.Message "No record found"
 // @Failure  500 {object} util.Message "Database error"
 // @Router   /builds/{id} [get]
-func getBuild(dao dao.DAO[model.Build, model.BuildCore, model.BuildCreate, model.BuildShort]) gin.HandlerFunc { return dao.GetOne }
+func getBuild(dao dao.DAO[model.Build, model.BuildShort]) gin.HandlerFunc { return dao.GetOne }
 
 // @Summary  Update build
 // @ID       update-build
@@ -59,7 +61,7 @@ func getBuild(dao dao.DAO[model.Build, model.BuildCore, model.BuildCreate, model
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
 // @Router   /builds/{id} [put]
-func updateBuild(dao dao.DAO[model.Build, model.BuildCore, model.BuildCreate, model.BuildShort]) gin.HandlerFunc { return dao.Update }
+func updateBuild(dao dao.DAO[model.Build, model.BuildShort]) gin.HandlerFunc { return dao.Update }
 
 func InitBuildGroup(db *gorm.DB, rg *gin.RouterGroup) {
 	dao := controller.InitBuildDAO(db)

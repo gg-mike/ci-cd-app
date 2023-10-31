@@ -20,3 +20,7 @@ test:
 
 test-app:
 	go test -v ./cmd/${APP}/... ./internal/...
+
+migrate:
+	go build -o bin/dbMigrator cmd/dbMigrator/main.go
+	./bin/dbMigrator

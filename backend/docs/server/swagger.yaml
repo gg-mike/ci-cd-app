@@ -10,41 +10,24 @@ definitions:
         type: integer
       pipeline_id:
         type: string
+      rev_list:
+        items:
+          type: string
+        type: array
       status:
         $ref: '#/definitions/model.BuildStatus'
       steps:
         items:
           $ref: '#/definitions/model.BuildStep'
         type: array
-      tags:
-        type: string
       updated_at:
-        type: string
-      worker_id:
-        type: string
-    type: object
-  model.BuildCore:
-    properties:
-      number:
-        type: integer
-      pipeline_id:
-        type: string
-      status:
-        $ref: '#/definitions/model.BuildStatus'
-      tags:
         type: string
       worker_id:
         type: string
     type: object
   model.BuildCreate:
     properties:
-      number:
-        type: integer
       pipeline_id:
-        type: string
-      status:
-        $ref: '#/definitions/model.BuildStatus'
-      tags:
         type: string
       worker_id:
         type: string
@@ -68,14 +51,14 @@ definitions:
         type: integer
       pipeline_id:
         type: string
-      status:
-        $ref: '#/definitions/model.BuildStatus'
+      rev_list:
+        items:
+          type: string
+        type: array
       steps:
         items:
           $ref: '#/definitions/model.BuildStepShort'
         type: array
-      tags:
-        type: string
       updated_at:
         type: string
       worker_id:
@@ -87,8 +70,10 @@ definitions:
     - 1
     - 2
     - 3
+    - 4
     type: integer
     x-enum-varnames:
+    - BuildScheduled
     - BuildRunning
     - BuildSuccessful
     - BuildFailed
@@ -110,15 +95,6 @@ definitions:
       name:
         type: string
       updated_at:
-        type: string
-    type: object
-  model.BuildStepCore:
-    properties:
-      build_id:
-        type: string
-      duration:
-        $ref: '#/definitions/time.Duration'
-      name:
         type: string
     type: object
   model.BuildStepShort:
@@ -149,6 +125,8 @@ definitions:
       created_at:
         type: string
       id:
+        type: string
+      last_rev:
         type: string
       name:
         type: string
@@ -183,17 +161,6 @@ definitions:
       system:
         type: string
     type: object
-  model.PipelineCore:
-    properties:
-      branch:
-        type: string
-      config:
-        $ref: '#/definitions/model.PipelineConfig'
-      name:
-        type: string
-      project_id:
-        type: string
-    type: object
   model.PipelineCreate:
     properties:
       branch:
@@ -209,8 +176,6 @@ definitions:
     properties:
       branch:
         type: string
-      config:
-        $ref: '#/definitions/model.PipelineConfig'
       created_at:
         type: string
       id:
@@ -247,13 +212,6 @@ definitions:
           $ref: '#/definitions/model.Variable'
         type: array
     type: object
-  model.ProjectCore:
-    properties:
-      name:
-        type: string
-      repo:
-        type: string
-    type: object
   model.ProjectCreate:
     properties:
       name:
@@ -283,19 +241,10 @@ definitions:
       key:
         type: string
       pipeline_id:
-        type: string
+        $ref: '#/definitions/uuid.NullUUID'
       project_id:
-        type: string
+        $ref: '#/definitions/uuid.NullUUID'
       updated_at:
-        type: string
-    type: object
-  model.SecretCore:
-    properties:
-      key:
-        type: string
-      pipeline_id:
-        type: string
-      project_id:
         type: string
     type: object
   model.SecretCreate:
@@ -303,9 +252,9 @@ definitions:
       key:
         type: string
       pipeline_id:
-        type: string
+        $ref: '#/definitions/uuid.NullUUID'
       project_id:
-        type: string
+        $ref: '#/definitions/uuid.NullUUID'
       value:
         type: string
     type: object
@@ -318,9 +267,9 @@ definitions:
       key:
         type: string
       pipeline_id:
-        type: string
+        $ref: '#/definitions/uuid.NullUUID'
       project_id:
-        type: string
+        $ref: '#/definitions/uuid.NullUUID'
       updated_at:
         type: string
     type: object
@@ -332,11 +281,6 @@ definitions:
         type: string
       updated_at:
         type: string
-      username:
-        type: string
-    type: object
-  model.UserCore:
-    properties:
       username:
         type: string
     type: object
@@ -365,23 +309,10 @@ definitions:
       key:
         type: string
       pipeline_id:
-        type: string
+        $ref: '#/definitions/uuid.NullUUID'
       project_id:
-        type: string
+        $ref: '#/definitions/uuid.NullUUID'
       updated_at:
-        type: string
-      value:
-        items:
-          type: integer
-        type: array
-    type: object
-  model.VariableCore:
-    properties:
-      key:
-        type: string
-      pipeline_id:
-        type: string
-      project_id:
         type: string
       value:
         items:
@@ -393,9 +324,9 @@ definitions:
       key:
         type: string
       pipeline_id:
-        type: string
+        $ref: '#/definitions/uuid.NullUUID'
       project_id:
-        type: string
+        $ref: '#/definitions/uuid.NullUUID'
       value:
         items:
           type: integer
@@ -410,9 +341,9 @@ definitions:
       key:
         type: string
       pipeline_id:
-        type: string
+        $ref: '#/definitions/uuid.NullUUID'
       project_id:
-        type: string
+        $ref: '#/definitions/uuid.NullUUID'
       updated_at:
         type: string
       value:
@@ -445,21 +376,6 @@ definitions:
       username:
         type: string
     type: object
-  model.WorkerCore:
-    properties:
-      address:
-        type: string
-      name:
-        type: string
-      status:
-        $ref: '#/definitions/model.WorkerStatus'
-      system:
-        type: string
-      type:
-        $ref: '#/definitions/model.WorkerType'
-      username:
-        type: string
-    type: object
   model.WorkerCreate:
     properties:
       address:
@@ -468,8 +384,6 @@ definitions:
         type: string
       private_key:
         type: string
-      status:
-        $ref: '#/definitions/model.WorkerStatus'
       system:
         type: string
       type:
@@ -487,8 +401,6 @@ definitions:
         type: string
       name:
         type: string
-      status:
-        $ref: '#/definitions/model.WorkerStatus'
       system:
         type: string
       type:
@@ -518,20 +430,52 @@ definitions:
     - WorkerDockerHost
   time.Duration:
     enum:
+    - -9223372036854775808
+    - 9223372036854775807
     - 1
     - 1000
     - 1000000
     - 1000000000
+    - 60000000000
+    - 3600000000000
+    - -9223372036854775808
+    - 9223372036854775807
+    - 1
+    - 1000
+    - 1000000
+    - 1000000000
+    - 60000000000
+    - 3600000000000
     type: integer
     x-enum-varnames:
+    - minDuration
+    - maxDuration
     - Nanosecond
     - Microsecond
     - Millisecond
     - Second
+    - Minute
+    - Hour
+    - minDuration
+    - maxDuration
+    - Nanosecond
+    - Microsecond
+    - Millisecond
+    - Second
+    - Minute
+    - Hour
   util.Message:
     properties:
       message:
         type: string
+    type: object
+  uuid.NullUUID:
+    properties:
+      uuid:
+        type: string
+      valid:
+        description: Valid is true if UUID is not NULL
+        type: boolean
     type: object
 info:
   contact: {}
@@ -557,11 +501,6 @@ paths:
         in: query
         name: order
         type: string
-      - description: Filter
-        in: body
-        name: build_step
-        schema:
-          $ref: '#/definitions/model.BuildStepCore'
       produces:
       - application/json
       responses:
@@ -635,11 +574,21 @@ paths:
         in: query
         name: order
         type: string
-      - description: Filter
-        in: body
-        name: build
-        schema:
-          $ref: '#/definitions/model.BuildCore'
+      - collectionFormat: csv
+        description: Build status (possible values)
+        in: query
+        items:
+          type: integer
+        name: status
+        type: array
+      - description: Build worker ID (exact)
+        in: query
+        name: worker_id
+        type: string
+      - description: Build pipeline ID (exact)
+        in: query
+        name: pipeline_id
+        type: string
       produces:
       - application/json
       responses:
@@ -776,11 +725,18 @@ paths:
         in: query
         name: order
         type: string
-      - description: Filter
-        in: body
-        name: pipeline
-        schema:
-          $ref: '#/definitions/model.PipelineCore'
+      - description: Pipeline name (pattern)
+        in: query
+        name: name
+        type: string
+      - description: Pipeline branch (pattern)
+        in: query
+        name: branch
+        type: string
+      - description: Pipeline project ID (exact)
+        in: query
+        name: project_id
+        type: string
       produces:
       - application/json
       responses:
@@ -843,6 +799,10 @@ paths:
         name: id
         required: true
         type: string
+      - description: Force deletion
+        in: query
+        name: force
+        type: boolean
       produces:
       - application/json
       responses:
@@ -943,11 +903,14 @@ paths:
         in: query
         name: order
         type: string
-      - description: Filter
-        in: body
-        name: project
-        schema:
-          $ref: '#/definitions/model.ProjectCore'
+      - description: Project name (pattern)
+        in: query
+        name: name
+        type: string
+      - description: Project repo (pattern)
+        in: query
+        name: repo
+        type: string
       produces:
       - application/json
       responses:
@@ -1010,6 +973,10 @@ paths:
         name: id
         required: true
         type: string
+      - description: Force deletion
+        in: query
+        name: force
+        type: boolean
       produces:
       - application/json
       responses:
@@ -1110,11 +1077,10 @@ paths:
         in: query
         name: order
         type: string
-      - description: Filter
-        in: body
-        name: secret
-        schema:
-          $ref: '#/definitions/model.SecretCore'
+      - description: Secret name (pattern)
+        in: query
+        name: name
+        type: string
       produces:
       - application/json
       responses:
@@ -1247,11 +1213,10 @@ paths:
         in: query
         name: order
         type: string
-      - description: Filter
-        in: body
-        name: user
-        schema:
-          $ref: '#/definitions/model.UserCore'
+      - description: Username (pattern)
+        in: query
+        name: username
+        type: string
       produces:
       - application/json
       responses:
@@ -1414,11 +1379,10 @@ paths:
         in: query
         name: order
         type: string
-      - description: Filter
-        in: body
-        name: variable
-        schema:
-          $ref: '#/definitions/model.VariableCore'
+      - description: Variable name (pattern)
+        in: query
+        name: name
+        type: string
       produces:
       - application/json
       responses:
@@ -1551,11 +1515,28 @@ paths:
         in: query
         name: order
         type: string
-      - description: Filter
-        in: body
-        name: worker
-        schema:
-          $ref: '#/definitions/model.WorkerCore'
+      - description: Worker name (pattern)
+        in: query
+        name: name
+        type: string
+      - description: Worker system (pattern)
+        in: query
+        name: system
+        type: string
+      - collectionFormat: csv
+        description: Worker status (possible values)
+        in: query
+        items:
+          type: integer
+        name: status
+        type: array
+      - collectionFormat: csv
+        description: Worker type (possible values)
+        in: query
+        items:
+          type: integer
+        name: type
+        type: array
       produces:
       - application/json
       responses:

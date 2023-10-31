@@ -7,9 +7,9 @@ import (
 )
 
 type BuildStepCore struct {
-	Name     string        `json:"name"     gorm:"uniqueIndex:sel;not null"`
+	Name     string        `json:"name"     gorm:"uniqueIndex:idx_build_steps;not null"`
 	Duration time.Duration `json:"duration" gorm:"not null"`
-	BuildID  uuid.UUID     `json:"build_id" gorm:"type:uuid;uniqueIndex:sel;not null"`
+	BuildID  uuid.UUID     `json:"build_id" gorm:"type:uuid;uniqueIndex:idx_build_steps;not null"`
 }
 
 type BuildStep struct {
@@ -23,7 +23,9 @@ type BuildStepCreate struct {
 }
 
 type BuildStepShort struct {
-	BuildStepCore
+	Name         string        `json:"name"`
+	Duration     time.Duration `json:"duration"`
+	BuildShortID uuid.UUID     `json:"build_id"`
 	Common
 }
 

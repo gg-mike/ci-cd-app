@@ -13,16 +13,16 @@ import (
 // @Tags     secrets
 // @Accept   json
 // @Produce  json
-// @Param    page   query int              false "Page number"
-// @Param    size   query int              false "Page size"
-// @Param    order  query string           false "Order by field"
-// @Param    secret body  model.SecretCore false "Filter"
+// @Param    page  query int    false "Page number"
+// @Param    size  query int    false "Page size"
+// @Param    order query string false "Order by field"
+// @Param    name  query string false "Secret name (pattern)"
 // @Success  200 {object} []model.SecretShort "List of secrets"
 // @Failure  400 {object} util.Message        "Error in request"
 // @Failure  404 {object} util.Message        "No records found"
 // @Failure  500 {object} util.Message        "Database error"
 // @Router   /secrets [get]
-func allSecrets(dao dao.DAO[model.Secret, model.SecretCore, model.SecretCreate, model.SecretShort]) gin.HandlerFunc { return dao.GetMany }
+func allSecrets(dao dao.DAO[model.Secret, model.SecretShort]) gin.HandlerFunc { return dao.GetMany }
 
 // @Summary  Create new secret
 // @ID       create-secret
@@ -34,7 +34,7 @@ func allSecrets(dao dao.DAO[model.Secret, model.SecretCore, model.SecretCreate, 
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
 // @Router   /secrets [post]
-func createSecret(dao dao.DAO[model.Secret, model.SecretCore, model.SecretCreate, model.SecretShort]) gin.HandlerFunc { return dao.Create }
+func createSecret(dao dao.DAO[model.Secret, model.SecretShort]) gin.HandlerFunc { return dao.Create }
 
 // @Summary  Update secret
 // @ID       update-secret
@@ -47,7 +47,7 @@ func createSecret(dao dao.DAO[model.Secret, model.SecretCore, model.SecretCreate
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
 // @Router   /secrets/{id} [put]
-func updateSecret(dao dao.DAO[model.Secret, model.SecretCore, model.SecretCreate, model.SecretShort]) gin.HandlerFunc { return dao.Update }
+func updateSecret(dao dao.DAO[model.Secret, model.SecretShort]) gin.HandlerFunc { return dao.Update }
 
 // @Summary  Delete secret
 // @ID       delete-secret
@@ -58,7 +58,7 @@ func updateSecret(dao dao.DAO[model.Secret, model.SecretCore, model.SecretCreate
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
 // @Router   /secrets/{id} [delete]
-func deleteSecret(dao dao.DAO[model.Secret, model.SecretCore, model.SecretCreate, model.SecretShort]) gin.HandlerFunc { return dao.Delete }
+func deleteSecret(dao dao.DAO[model.Secret, model.SecretShort]) gin.HandlerFunc { return dao.Delete }
 
 func InitSecretGroup(db *gorm.DB, rg *gin.RouterGroup) {
 	dao := controller.InitSecretDAO(db)

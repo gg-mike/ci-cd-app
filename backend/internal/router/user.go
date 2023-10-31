@@ -13,16 +13,16 @@ import (
 // @Tags     users
 // @Accept   json
 // @Produce  json
-// @Param    page  query int            false "Page number"
-// @Param    size  query int            false "Page size"
-// @Param    order query string         false "Order by field"
-// @Param    user  body  model.UserCore false "Filter"
+// @Param    page     query int    false "Page number"
+// @Param    size     query int    false "Page size"
+// @Param    order    query string false "Order by field"
+// @Param    username query string false "Username (pattern)"
 // @Success  200 {object} []model.UserShort "List of users"
 // @Failure  400 {object} util.Message      "Error in request"
 // @Failure  404 {object} util.Message      "No records found"
 // @Failure  500 {object} util.Message      "Database error"
 // @Router   /users [get]
-func allUsers(dao dao.DAO[model.User, model.UserCore, model.UserCreate, model.UserShort]) gin.HandlerFunc { return dao.GetMany }
+func allUsers(dao dao.DAO[model.User, model.UserShort]) gin.HandlerFunc { return dao.GetMany }
 
 // @Summary  Create new user
 // @ID       create-user
@@ -34,7 +34,7 @@ func allUsers(dao dao.DAO[model.User, model.UserCore, model.UserCreate, model.Us
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
 // @Router   /users [post]
-func createUser(dao dao.DAO[model.User, model.UserCore, model.UserCreate, model.UserShort]) gin.HandlerFunc { return dao.Create }
+func createUser(dao dao.DAO[model.User, model.UserShort]) gin.HandlerFunc { return dao.Create }
 
 // @Summary  Get the single user
 // @ID       single-user
@@ -46,7 +46,7 @@ func createUser(dao dao.DAO[model.User, model.UserCore, model.UserCreate, model.
 // @Failure  404 {object} util.Message "No record found"
 // @Failure  500 {object} util.Message "Database error"
 // @Router   /users/{id} [get]
-func getUser(dao dao.DAO[model.User, model.UserCore, model.UserCreate, model.UserShort]) gin.HandlerFunc { return dao.GetOne }
+func getUser(dao dao.DAO[model.User, model.UserShort]) gin.HandlerFunc { return dao.GetOne }
 
 // @Summary  Update user
 // @ID       update-user
@@ -59,7 +59,7 @@ func getUser(dao dao.DAO[model.User, model.UserCore, model.UserCreate, model.Use
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
 // @Router   /users/{id} [put]
-func updateUser(dao dao.DAO[model.User, model.UserCore, model.UserCreate, model.UserShort]) gin.HandlerFunc { return dao.Update }
+func updateUser(dao dao.DAO[model.User, model.UserShort]) gin.HandlerFunc { return dao.Update }
 
 // @Summary  Delete user
 // @ID       delete-user
@@ -70,7 +70,7 @@ func updateUser(dao dao.DAO[model.User, model.UserCore, model.UserCreate, model.
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
 // @Router   /users/{id} [delete]
-func deleteUser(dao dao.DAO[model.User, model.UserCore, model.UserCreate, model.UserShort]) gin.HandlerFunc { return dao.Delete }
+func deleteUser(dao dao.DAO[model.User, model.UserShort]) gin.HandlerFunc { return dao.Delete }
 
 func InitUserGroup(db *gorm.DB, rg *gin.RouterGroup) {
 	dao := controller.InitUserDAO(db)

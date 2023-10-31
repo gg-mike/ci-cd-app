@@ -13,16 +13,16 @@ import (
 // @Tags     variables
 // @Accept   json
 // @Produce  json
-// @Param    page     query int                false "Page number"
-// @Param    size     query int                false "Page size"
-// @Param    order    query string             false "Order by field"
-// @Param    variable body  model.VariableCore false "Filter"
+// @Param    page  query int    false "Page number"
+// @Param    size  query int    false "Page size"
+// @Param    order query string false "Order by field"
+// @Param    name  query string false "Variable name (pattern)"
 // @Success  200 {object} []model.VariableShort "List of variables"
 // @Failure  400 {object} util.Message          "Error in request"
 // @Failure  404 {object} util.Message          "No records found"
 // @Failure  500 {object} util.Message          "Database error"
 // @Router   /variables [get]
-func allVariables(dao dao.DAO[model.Variable, model.VariableCore, model.VariableCreate, model.VariableShort]) gin.HandlerFunc { return dao.GetMany }
+func allVariables(dao dao.DAO[model.Variable, model.VariableShort]) gin.HandlerFunc { return dao.GetMany }
 
 // @Summary  Create new variable
 // @ID       create-variable
@@ -34,7 +34,7 @@ func allVariables(dao dao.DAO[model.Variable, model.VariableCore, model.Variable
 // @Failure  400 {object} util.Message   "Error in params"
 // @Failure  501 {object} util.Message   "Endpoint not implemented"
 // @Router   /variables [post]
-func createVariable(dao dao.DAO[model.Variable, model.VariableCore, model.VariableCreate, model.VariableShort]) gin.HandlerFunc { return dao.Create }
+func createVariable(dao dao.DAO[model.Variable, model.VariableShort]) gin.HandlerFunc { return dao.Create }
 
 // @Summary  Update variable
 // @ID       update-variable
@@ -47,7 +47,7 @@ func createVariable(dao dao.DAO[model.Variable, model.VariableCore, model.Variab
 // @Failure  400 {object} util.Message   "Error in params"
 // @Failure  501 {object} util.Message   "Endpoint not implemented"
 // @Router   /variables/{id} [put]
-func updateVariable(dao dao.DAO[model.Variable, model.VariableCore, model.VariableCreate, model.VariableShort]) gin.HandlerFunc { return dao.Update }
+func updateVariable(dao dao.DAO[model.Variable, model.VariableShort]) gin.HandlerFunc { return dao.Update }
 
 // @Summary  Delete variable
 // @ID       delete-variable
@@ -58,7 +58,7 @@ func updateVariable(dao dao.DAO[model.Variable, model.VariableCore, model.Variab
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
 // @Router   /variables/{id} [delete]
-func deleteVariable(dao dao.DAO[model.Variable, model.VariableCore, model.VariableCreate, model.VariableShort]) gin.HandlerFunc { return dao.Delete }
+func deleteVariable(dao dao.DAO[model.Variable, model.VariableShort]) gin.HandlerFunc { return dao.Delete }
 
 func InitVariableGroup(db *gorm.DB, rg *gin.RouterGroup) {
 	dao := controller.InitVariableDAO(db)

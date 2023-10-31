@@ -13,16 +13,19 @@ import (
 // @Tags     workers
 // @Accept   json
 // @Produce  json
-// @Param    page   query int              false "Page number"
-// @Param    size   query int              false "Page size"
-// @Param    order  query string           false "Order by field"
-// @Param    worker body  model.WorkerCore false "Filter"
+// @Param    page   query int    false "Page number"
+// @Param    size   query int    false "Page size"
+// @Param    order  query string false "Order by field"
+// @Param    name   query string false "Worker name (pattern)"
+// @Param    system query string false "Worker system (pattern)"
+// @Param    status query []int  false "Worker status (possible values)"
+// @Param    type   query []int  false "Worker type (possible values)"
 // @Success  200 {object} []model.WorkerShort "List of workers"
 // @Failure  400 {object} util.Message        "Error in request"
 // @Failure  404 {object} util.Message        "No records found"
 // @Failure  500 {object} util.Message        "Database error"
 // @Router   /workers [get]
-func allWorkers(dao dao.DAO[model.Worker, model.WorkerCore, model.WorkerCreate, model.WorkerShort]) gin.HandlerFunc { return dao.GetMany }
+func allWorkers(dao dao.DAO[model.Worker, model.WorkerShort]) gin.HandlerFunc { return dao.GetMany }
 
 // @Summary  Create new worker
 // @ID       create-worker
@@ -34,7 +37,7 @@ func allWorkers(dao dao.DAO[model.Worker, model.WorkerCore, model.WorkerCreate, 
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
 // @Router   /workers [post]
-func createWorker(dao dao.DAO[model.Worker, model.WorkerCore, model.WorkerCreate, model.WorkerShort]) gin.HandlerFunc { return dao.Create }
+func createWorker(dao dao.DAO[model.Worker, model.WorkerShort]) gin.HandlerFunc { return dao.Create }
 
 // @Summary  Get the single worker
 // @ID       single-worker
@@ -46,7 +49,7 @@ func createWorker(dao dao.DAO[model.Worker, model.WorkerCore, model.WorkerCreate
 // @Failure  404 {object} util.Message "No record found"
 // @Failure  500 {object} util.Message "Database error"
 // @Router   /workers/{id} [get]
-func getWorker(dao dao.DAO[model.Worker, model.WorkerCore, model.WorkerCreate, model.WorkerShort]) gin.HandlerFunc { return dao.GetOne }
+func getWorker(dao dao.DAO[model.Worker, model.WorkerShort]) gin.HandlerFunc { return dao.GetOne }
 
 // @Summary  Update worker
 // @ID       update-worker
@@ -59,7 +62,7 @@ func getWorker(dao dao.DAO[model.Worker, model.WorkerCore, model.WorkerCreate, m
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
 // @Router   /workers/{id} [put]
-func updateWorker(dao dao.DAO[model.Worker, model.WorkerCore, model.WorkerCreate, model.WorkerShort]) gin.HandlerFunc { return dao.Update }
+func updateWorker(dao dao.DAO[model.Worker, model.WorkerShort]) gin.HandlerFunc { return dao.Update }
 
 // @Summary  Delete worker
 // @ID       delete-worker
@@ -70,7 +73,7 @@ func updateWorker(dao dao.DAO[model.Worker, model.WorkerCore, model.WorkerCreate
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
 // @Router   /workers/{id} [delete]
-func deleteWorker(dao dao.DAO[model.Worker, model.WorkerCore, model.WorkerCreate, model.WorkerShort]) gin.HandlerFunc { return dao.Delete }
+func deleteWorker(dao dao.DAO[model.Worker, model.WorkerShort]) gin.HandlerFunc { return dao.Delete }
 
 func InitWorkerGroup(db *gorm.DB, rg *gin.RouterGroup) {
 	dao := controller.InitWorkerDAO(db)

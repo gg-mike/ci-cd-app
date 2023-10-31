@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"errors"
-
 	"github.com/gg-mike/ci-cd-app/backend/internal/controller/dao"
 	"github.com/gg-mike/ci-cd-app/backend/internal/model"
 	"github.com/gin-gonic/gin"
@@ -10,15 +8,24 @@ import (
 	"gorm.io/gorm"
 )
 
-func InitWorkerDAO(db *gorm.DB) dao.DAO[model.Worker, model.WorkerCore, model.WorkerCreate, model.WorkerShort] {
-	return dao.DAO[model.Worker, model.WorkerCore, model.WorkerCreate, model.WorkerShort] {
+func InitWorkerDAO(db *gorm.DB) dao.DAO[model.Worker, model.WorkerShort] {
+	filter := func(ctx *gin.Context) (map[string]any, error) {
+		filters := map[string]any{}
+		for key := range ctx.Request.URL.Query() {
+			switch key {
+			case "name":   filters["name   LIKE ?"] = "%" + ctx.Query(key) + "%"
+			case "system": filters["system LIKE ?"] = "%" + ctx.Query(key) + "%"
+			case "status": filters["status IN ?"]   = ctx.QueryArray(key)
+			case "type":   filters["type   IN ?"]   = ctx.QueryArray(key)
+			}
+		}
+	
+		return filters, nil
+	}
+
+	return dao.DAO[model.Worker, model.WorkerShort] {
 		DB: db,
-		BeforeCreate: func(ctx *gin.Context, model model.WorkerCreate) error { return nil },
-		AfterCreate:  func(ctx *gin.Context, model model.WorkerCreate) error { return errors.New("not implemented") },
-		BeforeUpdate: func(ctx *gin.Context, model model.WorkerCreate) error { return nil },
-		AfterUpdate:  func(ctx *gin.Context, model model.WorkerCreate) error { return errors.New("not implemented") },
-		BeforeDelete: func(ctx *gin.Context, model model.Worker) error { return nil },
-		AfterDelete:  func(ctx *gin.Context, model model.Worker) error { return errors.New("not implemented") },
-		PKCond:       func(id uuid.UUID) model.Worker { return model.Worker { Common: model.Common { ID: id } }},
+		PKCond: func(id uuid.UUID) model.Worker { return model.Worker { Common: model.Common { ID: id } }},
+		Filter: filter,
 	}
 }

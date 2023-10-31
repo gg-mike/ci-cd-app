@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func Init(dbUrl string) (*gorm.DB, error) {
+func Init(dbUrl string, migrate bool) (*gorm.DB, error) {
 	db, err := gorm.Open(postgres.Open(dbUrl), &gorm.Config{
     Logger: logger.Gorm(),
   })
@@ -15,6 +15,10 @@ func Init(dbUrl string) (*gorm.DB, error) {
 		return nil, err
 	}
 
+	if !migrate {
+		return db, nil
+	}
+	
 	if err = db.AutoMigrate(
 		&model.Worker{},
 		&model.Project{},

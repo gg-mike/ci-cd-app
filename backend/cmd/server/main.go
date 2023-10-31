@@ -7,6 +7,7 @@ import (
 	"github.com/gg-mike/ci-cd-app/backend/internal/logger"
 	"github.com/gg-mike/ci-cd-app/backend/internal/router"
 	"github.com/gg-mike/ci-cd-app/backend/internal/sys"
+	"github.com/gg-mike/ci-cd-app/backend/internal/vault"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
@@ -25,15 +26,30 @@ func init() {
 	gin.SetMode(gin.ReleaseMode)
 
 	logDir := sys.GetEnvWithFallback("LOGS", "./logs")
-	logger.MultiOutput(logDir)
+	logger.MultiOutput("server", logDir)
 
 	dbUrl, err := sys.GetRequiredEnv("DB_URL")
 	if err != nil {
 		logger.Basic(zerolog.FatalLevel, "main").Msgf("Missing DB_URL variable")
 	}
-	DB, err = db.Init(dbUrl)
+	DB, err = db.Init(dbUrl, false)
 	if err != nil {
 		logger.Basic(zerolog.FatalLevel, "main").Msgf("Error while connecting to database: %v", err)
+	}
+
+	vaultAddr, err := sys.GetRequiredEnv("VAULT_ADDR")
+	if err != nil {
+		logger.Basic(zerolog.FatalLevel, "main").Msgf("Missing VAULT_ADDR variable")
+	}
+
+	vaultRootToken, err := sys.GetRequiredEnv("VAULT_ROOT_TOKEN")
+	if err != nil {
+		logger.Basic(zerolog.FatalLevel, "main").Msgf("Missing VAULT_ROOT_TOKEN variable")
+	}
+
+	err = vault.Init(vaultAddr, vaultRootToken)
+	if err != nil {
+		logger.Basic(zerolog.FatalLevel, "main").Msgf("Error while connecting to vault: %v", err)
 	}
 }
 

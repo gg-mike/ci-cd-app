@@ -8,15 +8,21 @@ import (
 	"gorm.io/gorm"
 )
 
-func InitVariableDAO(db *gorm.DB) dao.DAO[model.Variable, model.VariableCore, model.VariableCreate, model.VariableShort] {
-	return dao.DAO[model.Variable, model.VariableCore, model.VariableCreate, model.VariableShort] {
+func InitVariableDAO(db *gorm.DB) dao.DAO[model.Variable, model.VariableShort] {
+	filter := func(ctx *gin.Context) (map[string]any, error) {
+		filters := map[string]any{}
+		for key := range ctx.Request.URL.Query() {
+			switch key {
+			case "name": filters["name LIKE ?"] = "%" + ctx.Query(key) + "%"
+			}
+		}
+	
+		return filters, nil
+	}
+
+	return dao.DAO[model.Variable, model.VariableShort] {
 		DB: db,
-		BeforeCreate: func(ctx *gin.Context, model model.VariableCreate) error { return nil },
-		AfterCreate:  func(ctx *gin.Context, model model.VariableCreate) error { return nil },
-		BeforeUpdate: func(ctx *gin.Context, model model.VariableCreate) error { return nil },
-		AfterUpdate:  func(ctx *gin.Context, model model.VariableCreate) error { return nil },
-		BeforeDelete: func(ctx *gin.Context, model model.Variable) error { return nil },
-		AfterDelete:  func(ctx *gin.Context, model model.Variable) error { return nil },
-		PKCond:       func(id uuid.UUID) model.Variable { return model.Variable { Common: model.Common { ID: id } }},
+		PKCond: func(id uuid.UUID) model.Variable { return model.Variable { Common: model.Common { ID: id } }},
+		Filter: filter,
 	}
 }

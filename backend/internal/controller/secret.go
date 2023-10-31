@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"errors"
-
 	"github.com/gg-mike/ci-cd-app/backend/internal/controller/dao"
 	"github.com/gg-mike/ci-cd-app/backend/internal/model"
 	"github.com/gin-gonic/gin"
@@ -10,15 +8,21 @@ import (
 	"gorm.io/gorm"
 )
 
-func InitSecretDAO(db *gorm.DB) dao.DAO[model.Secret, model.SecretCore, model.SecretCreate, model.SecretShort] {
-	return dao.DAO[model.Secret, model.SecretCore, model.SecretCreate, model.SecretShort] {
+func InitSecretDAO(db *gorm.DB) dao.DAO[model.Secret, model.SecretShort] {
+	filter := func(ctx *gin.Context) (map[string]any, error) {
+		filters := map[string]any{}
+		for key := range ctx.Request.URL.Query() {
+			switch key {
+			case "name": filters["name LIKE ?"] = "%" + ctx.Query(key) + "%"
+			}
+		}
+	
+		return filters, nil
+	}
+
+	return dao.DAO[model.Secret, model.SecretShort] {
 		DB: db,
-		BeforeCreate: func(ctx *gin.Context, model model.SecretCreate) error { return nil },
-		AfterCreate:  func(ctx *gin.Context, model model.SecretCreate) error { return errors.New("not implemented") },
-		BeforeUpdate: func(ctx *gin.Context, model model.SecretCreate) error { return nil },
-		AfterUpdate:  func(ctx *gin.Context, model model.SecretCreate) error { return errors.New("not implemented") },
-		BeforeDelete: func(ctx *gin.Context, model model.Secret) error { return nil },
-		AfterDelete:  func(ctx *gin.Context, model model.Secret) error { return errors.New("not implemented") },
-		PKCond:       func(id uuid.UUID) model.Secret { return model.Secret { Common: model.Common { ID: id } }},
+		PKCond: func(id uuid.UUID) model.Secret { return model.Secret { Common: model.Common { ID: id } }},
+		Filter: filter,
 	}
 }
