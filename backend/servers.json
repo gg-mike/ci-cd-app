@@ -1,0 +1,13 @@
+{
+  "Servers": {
+      "1": {
+        "Name": "gorm",
+        "Group": "Servers",
+        "Port": 5432,
+        "Username": "gorm",
+        "Host": "postgres",
+        "SSLMode": "disable",
+        "MaintenanceDB": "postgres"
+    }
+  }
+}

@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
@@ -15,7 +16,7 @@ func MultiOutput(logDir string) {
 	if err != nil {
 		log.Fatal().Msgf("Error creating log file (%v)", err)
 	}
-
-	writers := io.MultiWriter(os.Stdout, f) 
+	zerolog.NewConsoleWriter()
+	writers := io.MultiWriter(zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}, f)
 	log.Logger = log.Output(writers)
 }

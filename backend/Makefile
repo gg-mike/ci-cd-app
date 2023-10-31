@@ -6,9 +6,9 @@ build:
 
 .PHONY: docs
 docs:
-	swag init -o ./docs/${APP} -d cmd/${APP} --parseDependency
+	swag init -o ./docs/${APP} -d cmd/${APP},internal/router -pd
 
-run: build docs
+run: build
 	./bin/${APP}
 
 clean:

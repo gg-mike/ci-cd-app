@@ -7,5 +7,2577 @@
         "version": "1.0.0"
     },
     "basePath": "/api",
-    "paths": {}
+    "paths": {
+        "/build_steps": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "build steps"
+                ],
+                "summary": "Get all build steps",
+                "operationId": "all-build-steps",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size",
+                        "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order by field",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Filter",
+                        "name": "build_step",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/model.BuildStepCore"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of build steps",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.BuildStepShort"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error in request",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "No records found",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/build_steps/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "build steps"
+                ],
+                "summary": "Get the single build step",
+                "operationId": "single-build-step",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Build step ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requested build step",
+                        "schema": {
+                            "$ref": "#/definitions/model.BuildStep"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "No record found",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/builds": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "builds"
+                ],
+                "summary": "Get all builds",
+                "operationId": "all-builds",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size",
+                        "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order by field",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Filter",
+                        "name": "build",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/model.BuildCore"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of builds",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.BuildShort"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error in request",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "No records found",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "builds"
+                ],
+                "summary": "Create new build",
+                "operationId": "create-build",
+                "parameters": [
+                    {
+                        "description": "New build entry",
+                        "name": "build",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.BuildCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Newly created build",
+                        "schema": {
+                            "$ref": "#/definitions/model.Build"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/builds/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "builds"
+                ],
+                "summary": "Get the single build",
+                "operationId": "single-build",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Build ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requested build",
+                        "schema": {
+                            "$ref": "#/definitions/model.Build"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "No record found",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "builds"
+                ],
+                "summary": "Update build",
+                "operationId": "update-build",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Build ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated build entry",
+                        "name": "build",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.BuildCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated build",
+                        "schema": {
+                            "$ref": "#/definitions/model.Build"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/pipelines": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pipelines"
+                ],
+                "summary": "Get all pipelines",
+                "operationId": "all-pipelines",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size",
+                        "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order by field",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Filter",
+                        "name": "pipeline",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/model.PipelineCore"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of pipelines",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.PipelineShort"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error in request",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "No records found",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pipelines"
+                ],
+                "summary": "Create new pipeline",
+                "operationId": "create-pipeline",
+                "parameters": [
+                    {
+                        "description": "New pipeline entry",
+                        "name": "pipeline",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.PipelineCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Newly created pipeline",
+                        "schema": {
+                            "$ref": "#/definitions/model.Pipeline"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/pipelines/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pipelines"
+                ],
+                "summary": "Get the single pipeline",
+                "operationId": "single-pipeline",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Pipeline ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requested pipeline",
+                        "schema": {
+                            "$ref": "#/definitions/model.Pipeline"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "No record found",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pipelines"
+                ],
+                "summary": "Update pipeline",
+                "operationId": "update-pipeline",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Pipeline ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated pipeline entry",
+                        "name": "pipeline",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.PipelineCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated pipeline",
+                        "schema": {
+                            "$ref": "#/definitions/model.Pipeline"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pipelines"
+                ],
+                "summary": "Delete pipeline",
+                "operationId": "delete-pipeline",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Pipeline ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete message",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/projects": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "projects"
+                ],
+                "summary": "Get all projects",
+                "operationId": "all-projects",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size",
+                        "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order by field",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Filter",
+                        "name": "project",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/model.ProjectCore"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of projects",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.ProjectShort"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error in request",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "No records found",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "projects"
+                ],
+                "summary": "Create new project",
+                "operationId": "create-project",
+                "parameters": [
+                    {
+                        "description": "New project entry",
+                        "name": "project",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ProjectCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Newly created project",
+                        "schema": {
+                            "$ref": "#/definitions/model.Project"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "projects"
+                ],
+                "summary": "Get the single project",
+                "operationId": "single-project",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Project ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Requested project",
+                        "schema": {
+                            "$ref": "#/definitions/model.Project"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "No record found",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "projects"
+                ],
+                "summary": "Update project",
+                "operationId": "update-project",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Project ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated project entry",
+                        "name": "project",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ProjectCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated project",
+                        "schema": {
+                            "$ref": "#/definitions/model.Project"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "projects"
+                ],
+                "summary": "Delete project",
+                "operationId": "delete-project",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Project ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete message",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/secrets": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "secrets"
+                ],
+                "summary": "Get all secrets",
+                "operationId": "all-secrets",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size",
+                        "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order by field",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Filter",
+                        "name": "secret",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/model.SecretCore"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of secrets",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SecretShort"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error in request",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "No records found",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "secrets"
+                ],
+                "summary": "Create new secret",
+                "operationId": "create-secret",
+                "parameters": [
+                    {
+                        "description": "New secret entry",
+                        "name": "secret",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.SecretCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Newly created secret",
+                        "schema": {
+                            "$ref": "#/definitions/model.Secret"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/secrets/{id}": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "secrets"
+                ],
+                "summary": "Update secret",
+                "operationId": "update-secret",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Secret ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated secret entry",
+                        "name": "secret",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.SecretCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated secret",
+                        "schema": {
+                            "$ref": "#/definitions/model.Secret"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "secrets"
+                ],
+                "summary": "Delete secret",
+                "operationId": "delete-secret",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Secret ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete message",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get all users",
+                "operationId": "all-users",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size",
+                        "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order by field",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Filter",
+                        "name": "user",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/model.UserCore"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of users",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.UserShort"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error in request",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "No records found",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Create new user",
+                "operationId": "create-user",
+                "parameters": [
+                    {
+                        "description": "New user entry",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UserCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Newly created user",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get the single user",
+                "operationId": "single-user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requested user",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "No record found",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update user",
+                "operationId": "update-user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated user entry",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UserCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated user",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Delete user",
+                "operationId": "delete-user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete message",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/variables": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "variables"
+                ],
+                "summary": "Get all variables",
+                "operationId": "all-variables",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size",
+                        "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order by field",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Filter",
+                        "name": "variable",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/model.VariableCore"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of variables",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.VariableShort"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error in request",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "No records found",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "variables"
+                ],
+                "summary": "Create new variable",
+                "operationId": "create-variable",
+                "parameters": [
+                    {
+                        "description": "New variable entry",
+                        "name": "variable",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.VariableCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Newly created variable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Variable"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/variables/{id}": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "variables"
+                ],
+                "summary": "Update variable",
+                "operationId": "update-variable",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Variable ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated variable entry",
+                        "name": "variable",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.VariableCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated variable",
+                        "schema": {
+                            "$ref": "#/definitions/model.Variable"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "variables"
+                ],
+                "summary": "Delete variable",
+                "operationId": "delete-variable",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Variable ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete message",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/workers": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workers"
+                ],
+                "summary": "Get all workers",
+                "operationId": "all-workers",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size",
+                        "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order by field",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Filter",
+                        "name": "worker",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/model.WorkerCore"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of workers",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.WorkerShort"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error in request",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "No records found",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workers"
+                ],
+                "summary": "Create new worker",
+                "operationId": "create-worker",
+                "parameters": [
+                    {
+                        "description": "New worker entry",
+                        "name": "worker",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.WorkerCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Newly created worker",
+                        "schema": {
+                            "$ref": "#/definitions/model.Worker"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/workers/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workers"
+                ],
+                "summary": "Get the single worker",
+                "operationId": "single-worker",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Worker ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requested worker",
+                        "schema": {
+                            "$ref": "#/definitions/model.Worker"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "No record found",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workers"
+                ],
+                "summary": "Update worker",
+                "operationId": "update-worker",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Worker ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated worker entry",
+                        "name": "worker",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.WorkerCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated worker",
+                        "schema": {
+                            "$ref": "#/definitions/model.Worker"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workers"
+                ],
+                "summary": "Delete worker",
+                "operationId": "delete-worker",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Worker ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete message",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "400": {
+                        "description": "Error in params",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    },
+                    "501": {
+                        "description": "Endpoint not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/util.Message"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.Build": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "integer"
+                },
+                "pipeline_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/model.BuildStatus"
+                },
+                "steps": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.BuildStep"
+                    }
+                },
+                "tags": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "worker_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.BuildCore": {
+            "type": "object",
+            "properties": {
+                "number": {
+                    "type": "integer"
+                },
+                "pipeline_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/model.BuildStatus"
+                },
+                "tags": {
+                    "type": "string"
+                },
+                "worker_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.BuildCreate": {
+            "type": "object",
+            "properties": {
+                "number": {
+                    "type": "integer"
+                },
+                "pipeline_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/model.BuildStatus"
+                },
+                "tags": {
+                    "type": "string"
+                },
+                "worker_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.BuildLog": {
+            "type": "object",
+            "properties": {
+                "build_step_id": {
+                    "type": "string"
+                },
+                "command": {
+                    "type": "string"
+                },
+                "output": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.BuildShort": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "integer"
+                },
+                "pipeline_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/model.BuildStatus"
+                },
+                "steps": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.BuildStepShort"
+                    }
+                },
+                "tags": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "worker_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.BuildStatus": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3
+            ],
+            "x-enum-varnames": [
+                "BuildRunning",
+                "BuildSuccessful",
+                "BuildFailed",
+                "BuildCanceled"
+            ]
+        },
+        "model.BuildStep": {
+            "type": "object",
+            "properties": {
+                "build_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "duration": {
+                    "$ref": "#/definitions/time.Duration"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "logs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.BuildLog"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.BuildStepCore": {
+            "type": "object",
+            "properties": {
+                "build_id": {
+                    "type": "string"
+                },
+                "duration": {
+                    "$ref": "#/definitions/time.Duration"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.BuildStepShort": {
+            "type": "object",
+            "properties": {
+                "build_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "duration": {
+                    "$ref": "#/definitions/time.Duration"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Pipeline": {
+            "type": "object",
+            "properties": {
+                "branch": {
+                    "type": "string"
+                },
+                "builds": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Build"
+                    }
+                },
+                "config": {
+                    "$ref": "#/definitions/model.PipelineConfig"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                },
+                "secrets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Secret"
+                    }
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "variables": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Variable"
+                    }
+                }
+            }
+        },
+        "model.PipelineConfig": {
+            "type": "object",
+            "properties": {
+                "image": {
+                    "type": "string"
+                },
+                "steps": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "commands": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "name": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "system": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.PipelineCore": {
+            "type": "object",
+            "properties": {
+                "branch": {
+                    "type": "string"
+                },
+                "config": {
+                    "$ref": "#/definitions/model.PipelineConfig"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.PipelineCreate": {
+            "type": "object",
+            "properties": {
+                "branch": {
+                    "type": "string"
+                },
+                "config": {
+                    "$ref": "#/definitions/model.PipelineConfig"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.PipelineShort": {
+            "type": "object",
+            "properties": {
+                "branch": {
+                    "type": "string"
+                },
+                "config": {
+                    "$ref": "#/definitions/model.PipelineConfig"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Project": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "pipelines": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Pipeline"
+                    }
+                },
+                "repo": {
+                    "type": "string"
+                },
+                "secrets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Secret"
+                    }
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "variables": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Variable"
+                    }
+                }
+            }
+        },
+        "model.ProjectCore": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "repo": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ProjectCreate": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "repo": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ProjectShort": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "repo": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Secret": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "pipeline_id": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SecretCore": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "pipeline_id": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SecretCreate": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "pipeline_id": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SecretShort": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "pipeline_id": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.User": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.UserCore": {
+            "type": "object",
+            "properties": {
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.UserCreate": {
+            "type": "object",
+            "properties": {
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.UserShort": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Variable": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "pipeline_id": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "model.VariableCore": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "pipeline_id": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "model.VariableCreate": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "pipeline_id": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "model.VariableShort": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "pipeline_id": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "model.Worker": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "builds": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Build"
+                    }
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/model.WorkerStatus"
+                },
+                "system": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/model.WorkerType"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.WorkerCore": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/model.WorkerStatus"
+                },
+                "system": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/model.WorkerType"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.WorkerCreate": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "private_key": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/model.WorkerStatus"
+                },
+                "system": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/model.WorkerType"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.WorkerShort": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/model.WorkerStatus"
+                },
+                "system": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/model.WorkerType"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.WorkerStatus": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2
+            ],
+            "x-enum-varnames": [
+                "WorkerIdle",
+                "WorkerUsed",
+                "WorkerUnreachable"
+            ]
+        },
+        "model.WorkerType": {
+            "type": "integer",
+            "enum": [
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "WorkerStatic",
+                "WorkerDockerHost"
+            ]
+        },
+        "time.Duration": {
+            "type": "integer",
+            "enum": [
+                1,
+                1000,
+                1000000,
+                1000000000
+            ],
+            "x-enum-varnames": [
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second"
+            ]
+        },
+        "util.Message": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    }
 }

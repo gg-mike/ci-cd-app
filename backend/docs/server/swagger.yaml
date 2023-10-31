@@ -1,8 +1,1703 @@
 basePath: /api
+definitions:
+  model.Build:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      number:
+        type: integer
+      pipeline_id:
+        type: string
+      status:
+        $ref: '#/definitions/model.BuildStatus'
+      steps:
+        items:
+          $ref: '#/definitions/model.BuildStep'
+        type: array
+      tags:
+        type: string
+      updated_at:
+        type: string
+      worker_id:
+        type: string
+    type: object
+  model.BuildCore:
+    properties:
+      number:
+        type: integer
+      pipeline_id:
+        type: string
+      status:
+        $ref: '#/definitions/model.BuildStatus'
+      tags:
+        type: string
+      worker_id:
+        type: string
+    type: object
+  model.BuildCreate:
+    properties:
+      number:
+        type: integer
+      pipeline_id:
+        type: string
+      status:
+        $ref: '#/definitions/model.BuildStatus'
+      tags:
+        type: string
+      worker_id:
+        type: string
+    type: object
+  model.BuildLog:
+    properties:
+      build_step_id:
+        type: string
+      command:
+        type: string
+      output:
+        type: string
+    type: object
+  model.BuildShort:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      number:
+        type: integer
+      pipeline_id:
+        type: string
+      status:
+        $ref: '#/definitions/model.BuildStatus'
+      steps:
+        items:
+          $ref: '#/definitions/model.BuildStepShort'
+        type: array
+      tags:
+        type: string
+      updated_at:
+        type: string
+      worker_id:
+        type: string
+    type: object
+  model.BuildStatus:
+    enum:
+    - 0
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - BuildRunning
+    - BuildSuccessful
+    - BuildFailed
+    - BuildCanceled
+  model.BuildStep:
+    properties:
+      build_id:
+        type: string
+      created_at:
+        type: string
+      duration:
+        $ref: '#/definitions/time.Duration'
+      id:
+        type: string
+      logs:
+        items:
+          $ref: '#/definitions/model.BuildLog'
+        type: array
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.BuildStepCore:
+    properties:
+      build_id:
+        type: string
+      duration:
+        $ref: '#/definitions/time.Duration'
+      name:
+        type: string
+    type: object
+  model.BuildStepShort:
+    properties:
+      build_id:
+        type: string
+      created_at:
+        type: string
+      duration:
+        $ref: '#/definitions/time.Duration'
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Pipeline:
+    properties:
+      branch:
+        type: string
+      builds:
+        items:
+          $ref: '#/definitions/model.Build'
+        type: array
+      config:
+        $ref: '#/definitions/model.PipelineConfig'
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      project_id:
+        type: string
+      secrets:
+        items:
+          $ref: '#/definitions/model.Secret'
+        type: array
+      updated_at:
+        type: string
+      variables:
+        items:
+          $ref: '#/definitions/model.Variable'
+        type: array
+    type: object
+  model.PipelineConfig:
+    properties:
+      image:
+        type: string
+      steps:
+        items:
+          properties:
+            commands:
+              items:
+                type: string
+              type: array
+            name:
+              type: string
+          type: object
+        type: array
+      system:
+        type: string
+    type: object
+  model.PipelineCore:
+    properties:
+      branch:
+        type: string
+      config:
+        $ref: '#/definitions/model.PipelineConfig'
+      name:
+        type: string
+      project_id:
+        type: string
+    type: object
+  model.PipelineCreate:
+    properties:
+      branch:
+        type: string
+      config:
+        $ref: '#/definitions/model.PipelineConfig'
+      name:
+        type: string
+      project_id:
+        type: string
+    type: object
+  model.PipelineShort:
+    properties:
+      branch:
+        type: string
+      config:
+        $ref: '#/definitions/model.PipelineConfig'
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      project_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Project:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      pipelines:
+        items:
+          $ref: '#/definitions/model.Pipeline'
+        type: array
+      repo:
+        type: string
+      secrets:
+        items:
+          $ref: '#/definitions/model.Secret'
+        type: array
+      updated_at:
+        type: string
+      variables:
+        items:
+          $ref: '#/definitions/model.Variable'
+        type: array
+    type: object
+  model.ProjectCore:
+    properties:
+      name:
+        type: string
+      repo:
+        type: string
+    type: object
+  model.ProjectCreate:
+    properties:
+      name:
+        type: string
+      repo:
+        type: string
+    type: object
+  model.ProjectShort:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      repo:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Secret:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      key:
+        type: string
+      pipeline_id:
+        type: string
+      project_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.SecretCore:
+    properties:
+      key:
+        type: string
+      pipeline_id:
+        type: string
+      project_id:
+        type: string
+    type: object
+  model.SecretCreate:
+    properties:
+      key:
+        type: string
+      pipeline_id:
+        type: string
+      project_id:
+        type: string
+      value:
+        type: string
+    type: object
+  model.SecretShort:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      key:
+        type: string
+      pipeline_id:
+        type: string
+      project_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.User:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+  model.UserCore:
+    properties:
+      username:
+        type: string
+    type: object
+  model.UserCreate:
+    properties:
+      username:
+        type: string
+    type: object
+  model.UserShort:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+  model.Variable:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      key:
+        type: string
+      pipeline_id:
+        type: string
+      project_id:
+        type: string
+      updated_at:
+        type: string
+      value:
+        items:
+          type: integer
+        type: array
+    type: object
+  model.VariableCore:
+    properties:
+      key:
+        type: string
+      pipeline_id:
+        type: string
+      project_id:
+        type: string
+      value:
+        items:
+          type: integer
+        type: array
+    type: object
+  model.VariableCreate:
+    properties:
+      key:
+        type: string
+      pipeline_id:
+        type: string
+      project_id:
+        type: string
+      value:
+        items:
+          type: integer
+        type: array
+    type: object
+  model.VariableShort:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      key:
+        type: string
+      pipeline_id:
+        type: string
+      project_id:
+        type: string
+      updated_at:
+        type: string
+      value:
+        items:
+          type: integer
+        type: array
+    type: object
+  model.Worker:
+    properties:
+      address:
+        type: string
+      builds:
+        items:
+          $ref: '#/definitions/model.Build'
+        type: array
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      status:
+        $ref: '#/definitions/model.WorkerStatus'
+      system:
+        type: string
+      type:
+        $ref: '#/definitions/model.WorkerType'
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+  model.WorkerCore:
+    properties:
+      address:
+        type: string
+      name:
+        type: string
+      status:
+        $ref: '#/definitions/model.WorkerStatus'
+      system:
+        type: string
+      type:
+        $ref: '#/definitions/model.WorkerType'
+      username:
+        type: string
+    type: object
+  model.WorkerCreate:
+    properties:
+      address:
+        type: string
+      name:
+        type: string
+      private_key:
+        type: string
+      status:
+        $ref: '#/definitions/model.WorkerStatus'
+      system:
+        type: string
+      type:
+        $ref: '#/definitions/model.WorkerType'
+      username:
+        type: string
+    type: object
+  model.WorkerShort:
+    properties:
+      address:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      status:
+        $ref: '#/definitions/model.WorkerStatus'
+      system:
+        type: string
+      type:
+        $ref: '#/definitions/model.WorkerType'
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+  model.WorkerStatus:
+    enum:
+    - 0
+    - 1
+    - 2
+    type: integer
+    x-enum-varnames:
+    - WorkerIdle
+    - WorkerUsed
+    - WorkerUnreachable
+  model.WorkerType:
+    enum:
+    - 0
+    - 1
+    type: integer
+    x-enum-varnames:
+    - WorkerStatic
+    - WorkerDockerHost
+  time.Duration:
+    enum:
+    - 1
+    - 1000
+    - 1000000
+    - 1000000000
+    type: integer
+    x-enum-varnames:
+    - Nanosecond
+    - Microsecond
+    - Millisecond
+    - Second
+  util.Message:
+    properties:
+      message:
+        type: string
+    type: object
 info:
   contact: {}
   description: Server for CI/CD application developed using Go (Gin, Gorm).
   title: CI/CD Application - Server API
   version: 1.0.0
-paths: {}
+paths:
+  /build_steps:
+    get:
+      consumes:
+      - application/json
+      operationId: all-build-steps
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: size
+        type: integer
+      - description: Order by field
+        in: query
+        name: order
+        type: string
+      - description: Filter
+        in: body
+        name: build_step
+        schema:
+          $ref: '#/definitions/model.BuildStepCore'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of build steps
+          schema:
+            items:
+              $ref: '#/definitions/model.BuildStepShort'
+            type: array
+        "400":
+          description: Error in request
+          schema:
+            $ref: '#/definitions/util.Message'
+        "404":
+          description: No records found
+          schema:
+            $ref: '#/definitions/util.Message'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Get all build steps
+      tags:
+      - build steps
+  /build_steps/{id}:
+    get:
+      operationId: single-build-step
+      parameters:
+      - description: Build step ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requested build step
+          schema:
+            $ref: '#/definitions/model.BuildStep'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "404":
+          description: No record found
+          schema:
+            $ref: '#/definitions/util.Message'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Get the single build step
+      tags:
+      - build steps
+  /builds:
+    get:
+      consumes:
+      - application/json
+      operationId: all-builds
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: size
+        type: integer
+      - description: Order by field
+        in: query
+        name: order
+        type: string
+      - description: Filter
+        in: body
+        name: build
+        schema:
+          $ref: '#/definitions/model.BuildCore'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of builds
+          schema:
+            items:
+              $ref: '#/definitions/model.BuildShort'
+            type: array
+        "400":
+          description: Error in request
+          schema:
+            $ref: '#/definitions/util.Message'
+        "404":
+          description: No records found
+          schema:
+            $ref: '#/definitions/util.Message'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Get all builds
+      tags:
+      - builds
+    post:
+      consumes:
+      - application/json
+      operationId: create-build
+      parameters:
+      - description: New build entry
+        in: body
+        name: build
+        required: true
+        schema:
+          $ref: '#/definitions/model.BuildCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Newly created build
+          schema:
+            $ref: '#/definitions/model.Build'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Create new build
+      tags:
+      - builds
+  /builds/{id}:
+    get:
+      operationId: single-build
+      parameters:
+      - description: Build ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requested build
+          schema:
+            $ref: '#/definitions/model.Build'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "404":
+          description: No record found
+          schema:
+            $ref: '#/definitions/util.Message'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Get the single build
+      tags:
+      - builds
+    put:
+      consumes:
+      - application/json
+      operationId: update-build
+      parameters:
+      - description: Build ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated build entry
+        in: body
+        name: build
+        required: true
+        schema:
+          $ref: '#/definitions/model.BuildCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated build
+          schema:
+            $ref: '#/definitions/model.Build'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Update build
+      tags:
+      - builds
+  /pipelines:
+    get:
+      consumes:
+      - application/json
+      operationId: all-pipelines
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: size
+        type: integer
+      - description: Order by field
+        in: query
+        name: order
+        type: string
+      - description: Filter
+        in: body
+        name: pipeline
+        schema:
+          $ref: '#/definitions/model.PipelineCore'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of pipelines
+          schema:
+            items:
+              $ref: '#/definitions/model.PipelineShort'
+            type: array
+        "400":
+          description: Error in request
+          schema:
+            $ref: '#/definitions/util.Message'
+        "404":
+          description: No records found
+          schema:
+            $ref: '#/definitions/util.Message'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Get all pipelines
+      tags:
+      - pipelines
+    post:
+      consumes:
+      - application/json
+      operationId: create-pipeline
+      parameters:
+      - description: New pipeline entry
+        in: body
+        name: pipeline
+        required: true
+        schema:
+          $ref: '#/definitions/model.PipelineCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Newly created pipeline
+          schema:
+            $ref: '#/definitions/model.Pipeline'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Create new pipeline
+      tags:
+      - pipelines
+  /pipelines/{id}:
+    delete:
+      operationId: delete-pipeline
+      parameters:
+      - description: Pipeline ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Delete message
+          schema:
+            $ref: '#/definitions/util.Message'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Delete pipeline
+      tags:
+      - pipelines
+    get:
+      operationId: single-pipeline
+      parameters:
+      - description: Pipeline ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requested pipeline
+          schema:
+            $ref: '#/definitions/model.Pipeline'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "404":
+          description: No record found
+          schema:
+            $ref: '#/definitions/util.Message'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Get the single pipeline
+      tags:
+      - pipelines
+    put:
+      consumes:
+      - application/json
+      operationId: update-pipeline
+      parameters:
+      - description: Pipeline ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated pipeline entry
+        in: body
+        name: pipeline
+        required: true
+        schema:
+          $ref: '#/definitions/model.PipelineCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated pipeline
+          schema:
+            $ref: '#/definitions/model.Pipeline'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Update pipeline
+      tags:
+      - pipelines
+  /projects:
+    get:
+      consumes:
+      - application/json
+      operationId: all-projects
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: size
+        type: integer
+      - description: Order by field
+        in: query
+        name: order
+        type: string
+      - description: Filter
+        in: body
+        name: project
+        schema:
+          $ref: '#/definitions/model.ProjectCore'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of projects
+          schema:
+            items:
+              $ref: '#/definitions/model.ProjectShort'
+            type: array
+        "400":
+          description: Error in request
+          schema:
+            $ref: '#/definitions/util.Message'
+        "404":
+          description: No records found
+          schema:
+            $ref: '#/definitions/util.Message'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Get all projects
+      tags:
+      - projects
+    post:
+      consumes:
+      - application/json
+      operationId: create-project
+      parameters:
+      - description: New project entry
+        in: body
+        name: project
+        required: true
+        schema:
+          $ref: '#/definitions/model.ProjectCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Newly created project
+          schema:
+            $ref: '#/definitions/model.Project'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Create new project
+      tags:
+      - projects
+  /projects/{id}:
+    delete:
+      operationId: delete-project
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Delete message
+          schema:
+            $ref: '#/definitions/util.Message'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Delete project
+      tags:
+      - projects
+    get:
+      operationId: single-project
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Requested project
+          schema:
+            $ref: '#/definitions/model.Project'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "404":
+          description: No record found
+          schema:
+            $ref: '#/definitions/util.Message'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Get the single project
+      tags:
+      - projects
+    put:
+      consumes:
+      - application/json
+      operationId: update-project
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated project entry
+        in: body
+        name: project
+        required: true
+        schema:
+          $ref: '#/definitions/model.ProjectCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated project
+          schema:
+            $ref: '#/definitions/model.Project'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Update project
+      tags:
+      - projects
+  /secrets:
+    get:
+      consumes:
+      - application/json
+      operationId: all-secrets
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: size
+        type: integer
+      - description: Order by field
+        in: query
+        name: order
+        type: string
+      - description: Filter
+        in: body
+        name: secret
+        schema:
+          $ref: '#/definitions/model.SecretCore'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of secrets
+          schema:
+            items:
+              $ref: '#/definitions/model.SecretShort'
+            type: array
+        "400":
+          description: Error in request
+          schema:
+            $ref: '#/definitions/util.Message'
+        "404":
+          description: No records found
+          schema:
+            $ref: '#/definitions/util.Message'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Get all secrets
+      tags:
+      - secrets
+    post:
+      consumes:
+      - application/json
+      operationId: create-secret
+      parameters:
+      - description: New secret entry
+        in: body
+        name: secret
+        required: true
+        schema:
+          $ref: '#/definitions/model.SecretCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Newly created secret
+          schema:
+            $ref: '#/definitions/model.Secret'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Create new secret
+      tags:
+      - secrets
+  /secrets/{id}:
+    delete:
+      operationId: delete-secret
+      parameters:
+      - description: Secret ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Delete message
+          schema:
+            $ref: '#/definitions/util.Message'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Delete secret
+      tags:
+      - secrets
+    put:
+      consumes:
+      - application/json
+      operationId: update-secret
+      parameters:
+      - description: Secret ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated secret entry
+        in: body
+        name: secret
+        required: true
+        schema:
+          $ref: '#/definitions/model.SecretCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated secret
+          schema:
+            $ref: '#/definitions/model.Secret'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Update secret
+      tags:
+      - secrets
+  /users:
+    get:
+      consumes:
+      - application/json
+      operationId: all-users
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: size
+        type: integer
+      - description: Order by field
+        in: query
+        name: order
+        type: string
+      - description: Filter
+        in: body
+        name: user
+        schema:
+          $ref: '#/definitions/model.UserCore'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of users
+          schema:
+            items:
+              $ref: '#/definitions/model.UserShort'
+            type: array
+        "400":
+          description: Error in request
+          schema:
+            $ref: '#/definitions/util.Message'
+        "404":
+          description: No records found
+          schema:
+            $ref: '#/definitions/util.Message'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Get all users
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      operationId: create-user
+      parameters:
+      - description: New user entry
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Newly created user
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Create new user
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      operationId: delete-user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Delete message
+          schema:
+            $ref: '#/definitions/util.Message'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Delete user
+      tags:
+      - users
+    get:
+      operationId: single-user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requested user
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "404":
+          description: No record found
+          schema:
+            $ref: '#/definitions/util.Message'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Get the single user
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      operationId: update-user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated user entry
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated user
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Update user
+      tags:
+      - users
+  /variables:
+    get:
+      consumes:
+      - application/json
+      operationId: all-variables
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: size
+        type: integer
+      - description: Order by field
+        in: query
+        name: order
+        type: string
+      - description: Filter
+        in: body
+        name: variable
+        schema:
+          $ref: '#/definitions/model.VariableCore'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of variables
+          schema:
+            items:
+              $ref: '#/definitions/model.VariableShort'
+            type: array
+        "400":
+          description: Error in request
+          schema:
+            $ref: '#/definitions/util.Message'
+        "404":
+          description: No records found
+          schema:
+            $ref: '#/definitions/util.Message'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Get all variables
+      tags:
+      - variables
+    post:
+      consumes:
+      - application/json
+      operationId: create-variable
+      parameters:
+      - description: New variable entry
+        in: body
+        name: variable
+        required: true
+        schema:
+          $ref: '#/definitions/model.VariableCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Newly created variable
+          schema:
+            $ref: '#/definitions/model.Variable'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Create new variable
+      tags:
+      - variables
+  /variables/{id}:
+    delete:
+      operationId: delete-variable
+      parameters:
+      - description: Variable ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Delete message
+          schema:
+            $ref: '#/definitions/util.Message'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Delete variable
+      tags:
+      - variables
+    put:
+      consumes:
+      - application/json
+      operationId: update-variable
+      parameters:
+      - description: Variable ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated variable entry
+        in: body
+        name: variable
+        required: true
+        schema:
+          $ref: '#/definitions/model.VariableCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated variable
+          schema:
+            $ref: '#/definitions/model.Variable'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Update variable
+      tags:
+      - variables
+  /workers:
+    get:
+      consumes:
+      - application/json
+      operationId: all-workers
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: size
+        type: integer
+      - description: Order by field
+        in: query
+        name: order
+        type: string
+      - description: Filter
+        in: body
+        name: worker
+        schema:
+          $ref: '#/definitions/model.WorkerCore'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of workers
+          schema:
+            items:
+              $ref: '#/definitions/model.WorkerShort'
+            type: array
+        "400":
+          description: Error in request
+          schema:
+            $ref: '#/definitions/util.Message'
+        "404":
+          description: No records found
+          schema:
+            $ref: '#/definitions/util.Message'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Get all workers
+      tags:
+      - workers
+    post:
+      consumes:
+      - application/json
+      operationId: create-worker
+      parameters:
+      - description: New worker entry
+        in: body
+        name: worker
+        required: true
+        schema:
+          $ref: '#/definitions/model.WorkerCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Newly created worker
+          schema:
+            $ref: '#/definitions/model.Worker'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Create new worker
+      tags:
+      - workers
+  /workers/{id}:
+    delete:
+      operationId: delete-worker
+      parameters:
+      - description: Worker ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Delete message
+          schema:
+            $ref: '#/definitions/util.Message'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Delete worker
+      tags:
+      - workers
+    get:
+      operationId: single-worker
+      parameters:
+      - description: Worker ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Requested worker
+          schema:
+            $ref: '#/definitions/model.Worker'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "404":
+          description: No record found
+          schema:
+            $ref: '#/definitions/util.Message'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Get the single worker
+      tags:
+      - workers
+    put:
+      consumes:
+      - application/json
+      operationId: update-worker
+      parameters:
+      - description: Worker ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated worker entry
+        in: body
+        name: worker
+        required: true
+        schema:
+          $ref: '#/definitions/model.WorkerCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated worker
+          schema:
+            $ref: '#/definitions/model.Worker'
+        "400":
+          description: Error in params
+          schema:
+            $ref: '#/definitions/util.Message'
+        "501":
+          description: Endpoint not implemented
+          schema:
+            $ref: '#/definitions/util.Message'
+      summary: Update worker
+      tags:
+      - workers
 swagger: "2.0"
