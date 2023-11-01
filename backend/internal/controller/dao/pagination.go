@@ -29,7 +29,7 @@ func Paginate(ctx *gin.Context) (int, int, string, error) {
 			return -1, -1, "", errors.New(`error parsing query param "size"`)
 		}
 	}
-	
+
 	order, _ := ctx.GetQuery("order")
 
 	if page >= 0 && size < 0 {
@@ -44,6 +44,6 @@ func Paginate(ctx *gin.Context) (int, int, string, error) {
 	if page < 0 && size >= 0 {
 		return -1, size, order, nil
 	}
-	
+
 	return page * size, size, order, nil
 }

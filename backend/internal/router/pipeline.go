@@ -24,7 +24,9 @@ import (
 // @Failure  404 {object} util.Message          "No records found"
 // @Failure  500 {object} util.Message          "Database error"
 // @Router   /pipelines [get]
-func allPipelines(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFunc { return dao.GetMany }
+func allPipelines(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFunc {
+	return dao.GetMany
+}
 
 // @Summary  Create new pipeline
 // @ID       create-pipeline
@@ -36,7 +38,9 @@ func allPipelines(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerF
 // @Failure  400 {object} util.Message   "Error in params"
 // @Failure  501 {object} util.Message   "Endpoint not implemented"
 // @Router   /pipelines [post]
-func createPipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFunc { return dao.Create }
+func createPipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFunc {
+	return dao.Create
+}
 
 // @Summary  Get the single pipeline
 // @ID       single-pipeline
@@ -61,7 +65,9 @@ func getPipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFu
 // @Failure  400 {object} util.Message   "Error in params"
 // @Failure  501 {object} util.Message   "Endpoint not implemented"
 // @Router   /pipelines/{id} [put]
-func updatePipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFunc { return dao.Update }
+func updatePipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFunc {
+	return dao.Update
+}
 
 // @Summary  Delete pipeline
 // @ID       delete-pipeline
@@ -73,17 +79,19 @@ func updatePipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.Handle
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
 // @Router   /pipelines/{id} [delete]
-func deletePipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFunc { return dao.Delete }
+func deletePipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFunc {
+	return dao.Delete
+}
 
 func InitPipelineGroup(db *gorm.DB, rg *gin.RouterGroup) {
 	dao := controller.InitPipelineDAO(db)
-	
+
 	pipelines := rg.Group("/pipelines")
 
-	pipelines.GET( "", allPipelines(dao))
+	pipelines.GET("", allPipelines(dao))
 	pipelines.POST("", createPipeline(dao))
-	
-	pipelines.GET(   "/:id", getPipeline(dao))
-	pipelines.PUT(   "/:id", updatePipeline(dao))
+
+	pipelines.GET("/:id", getPipeline(dao))
+	pipelines.PUT("/:id", updatePipeline(dao))
 	pipelines.DELETE("/:id", deletePipeline(dao))
 }

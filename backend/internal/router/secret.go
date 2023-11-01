@@ -64,10 +64,10 @@ func InitSecretGroup(db *gorm.DB, rg *gin.RouterGroup) {
 	dao := controller.InitSecretDAO(db)
 
 	secrets := rg.Group("/secrets")
-	
-	secrets.GET( "", allSecrets(dao))
+
+	secrets.GET("", allSecrets(dao))
 	secrets.POST("", createSecret(dao))
-	
-	secrets.PUT(   "/:id", updateSecret(dao))
+
+	secrets.PUT("/:id", updateSecret(dao))
 	secrets.DELETE("/:id", deleteSecret(dao))
 }

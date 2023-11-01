@@ -8,12 +8,15 @@ build:
 docs:
 	swag init -o ./docs/${APP} -d cmd/${APP},internal/router -pd
 
-run: build
+run: fmt build
 	./bin/${APP}
 
 clean:
 	go clean
 	rm -rf bin && mkdir bin
+
+fmt:
+	go fmt ./...
 
 test:
 	go test -v ${TEST_PKG}

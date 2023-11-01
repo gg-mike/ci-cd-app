@@ -23,7 +23,7 @@ type Secret struct {
 
 type SecretCreate struct {
 	SecretCore
-	Value      string `json:"value"`
+	Value string `json:"value"`
 }
 
 type SecretShort struct {
@@ -36,7 +36,7 @@ func (m *Secret) AfterCreate(tx *gorm.DB) error {
 	if !ok {
 		return errors.New("no obj given in instance")
 	}
-	return vault.Set(m.ID.String(), map[string]any{ "value": obj.(map[string]any)["value"] })
+	return vault.Set(m.ID.String(), map[string]any{"value": obj.(map[string]any)["value"]})
 }
 
 func (m *Secret) BeforeUpdate(tx *gorm.DB) error {
@@ -48,7 +48,7 @@ func (m *Secret) AfterUpdate(tx *gorm.DB) error {
 	if !ok {
 		return errors.New("no obj given in instance")
 	}
-	return vault.Set(m.ID.String(), map[string]any{ "value": obj.(map[string]any)["value"] })
+	return vault.Set(m.ID.String(), map[string]any{"value": obj.(map[string]any)["value"]})
 }
 
 func (m *Secret) AfterDelete(tx *gorm.DB) error {

@@ -22,7 +22,9 @@ import (
 // @Failure  404 {object} util.Message          "No records found"
 // @Failure  500 {object} util.Message          "Database error"
 // @Router   /variables [get]
-func allVariables(dao dao.DAO[model.Variable, model.VariableShort]) gin.HandlerFunc { return dao.GetMany }
+func allVariables(dao dao.DAO[model.Variable, model.VariableShort]) gin.HandlerFunc {
+	return dao.GetMany
+}
 
 // @Summary  Create new variable
 // @ID       create-variable
@@ -34,7 +36,9 @@ func allVariables(dao dao.DAO[model.Variable, model.VariableShort]) gin.HandlerF
 // @Failure  400 {object} util.Message   "Error in params"
 // @Failure  501 {object} util.Message   "Endpoint not implemented"
 // @Router   /variables [post]
-func createVariable(dao dao.DAO[model.Variable, model.VariableShort]) gin.HandlerFunc { return dao.Create }
+func createVariable(dao dao.DAO[model.Variable, model.VariableShort]) gin.HandlerFunc {
+	return dao.Create
+}
 
 // @Summary  Update variable
 // @ID       update-variable
@@ -47,7 +51,9 @@ func createVariable(dao dao.DAO[model.Variable, model.VariableShort]) gin.Handle
 // @Failure  400 {object} util.Message   "Error in params"
 // @Failure  501 {object} util.Message   "Endpoint not implemented"
 // @Router   /variables/{id} [put]
-func updateVariable(dao dao.DAO[model.Variable, model.VariableShort]) gin.HandlerFunc { return dao.Update }
+func updateVariable(dao dao.DAO[model.Variable, model.VariableShort]) gin.HandlerFunc {
+	return dao.Update
+}
 
 // @Summary  Delete variable
 // @ID       delete-variable
@@ -58,16 +64,18 @@ func updateVariable(dao dao.DAO[model.Variable, model.VariableShort]) gin.Handle
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
 // @Router   /variables/{id} [delete]
-func deleteVariable(dao dao.DAO[model.Variable, model.VariableShort]) gin.HandlerFunc { return dao.Delete }
+func deleteVariable(dao dao.DAO[model.Variable, model.VariableShort]) gin.HandlerFunc {
+	return dao.Delete
+}
 
 func InitVariableGroup(db *gorm.DB, rg *gin.RouterGroup) {
 	dao := controller.InitVariableDAO(db)
-	
+
 	variables := rg.Group("/variables")
 
-	variables.GET( "", allVariables(dao))
+	variables.GET("", allVariables(dao))
 	variables.POST("", createVariable(dao))
-	
-	variables.PUT(   "/:id", updateVariable(dao))
+
+	variables.PUT("/:id", updateVariable(dao))
 	variables.DELETE("/:id", deleteVariable(dao))
 }

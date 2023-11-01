@@ -79,11 +79,11 @@ func InitWorkerGroup(db *gorm.DB, rg *gin.RouterGroup) {
 	dao := controller.InitWorkerDAO(db)
 
 	workers := rg.Group("/workers")
-	
-	workers.GET( "", allWorkers(dao))
+
+	workers.GET("", allWorkers(dao))
 	workers.POST("", createWorker(dao))
-	
-	workers.GET(   "/:id", getWorker(dao))
-	workers.PUT(   "/:id", updateWorker(dao))
+
+	workers.GET("/:id", getWorker(dao))
+	workers.PUT("/:id", updateWorker(dao))
 	workers.DELETE("/:id", deleteWorker(dao))
 }

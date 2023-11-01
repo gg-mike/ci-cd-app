@@ -14,7 +14,7 @@ type BuildStepCore struct {
 
 type BuildStep struct {
 	BuildStepCore
-	Logs          []BuildLog `json:"logs" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;not null"`
+	Logs []BuildLog `json:"logs" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;not null"`
 	Common
 }
 

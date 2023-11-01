@@ -60,7 +60,7 @@ func init() {
 func main() {
 	probe := controller.ReadyProbe{}
 	probe.Init()
-	
+
 	port := sys.GetEnvWithFallback("PORT", "8080")
 
 	r := gin.New()
@@ -84,7 +84,7 @@ func main() {
 	router.InitUserGroup(DB, rg)
 	router.InitVariableGroup(DB, rg)
 	router.InitWorkerGroup(DB, rg)
-	
+
 	probe.Ready()
 
 	r.Run()

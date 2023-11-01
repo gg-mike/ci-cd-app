@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type BuildStatus uint8;
+type BuildStatus uint8
 
 const (
 	BuildScheduled BuildStatus = iota
@@ -25,10 +25,10 @@ type BuildCore struct {
 
 type Build struct {
 	BuildCore
-	Number    uint           `json:"number"   gorm:"index:,unique,composite:idx_builds;autoIncrement"`
-	RevList   pq.StringArray `json:"rev_list" gorm:"type:text[];not null"`
-	Status    BuildStatus    `json:"status"   gorm:"not null;default:0"`
-	Steps     []BuildStep    `json:"steps"    gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;not null"`
+	Number  uint           `json:"number"   gorm:"index:,unique,composite:idx_builds;autoIncrement"`
+	RevList pq.StringArray `json:"rev_list" gorm:"type:text[];not null"`
+	Status  BuildStatus    `json:"status"   gorm:"not null;default:0"`
+	Steps   []BuildStep    `json:"steps"    gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;not null"`
 	Common
 }
 

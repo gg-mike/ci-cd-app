@@ -78,11 +78,11 @@ func InitProjectGroup(db *gorm.DB, rg *gin.RouterGroup) {
 	dao := controller.InitProjectDAO(db)
 
 	projects := rg.Group("/projects")
-	
-	projects.GET( "", allProjects(dao))
+
+	projects.GET("", allProjects(dao))
 	projects.POST("", createProject(dao))
-	
-	projects.GET(   "/:id", getProject(dao))
-	projects.PUT(   "/:id", updateProject(dao))
+
+	projects.GET("/:id", getProject(dao))
+	projects.PUT("/:id", updateProject(dao))
 	projects.DELETE("/:id", deleteProject(dao))
 }

@@ -76,11 +76,11 @@ func InitUserGroup(db *gorm.DB, rg *gin.RouterGroup) {
 	dao := controller.InitUserDAO(db)
 
 	users := rg.Group("/users")
-	
-	users.GET( "", allUsers(dao))
+
+	users.GET("", allUsers(dao))
 	users.POST("", createUser(dao))
-	
-	users.GET(   "/:id", getUser(dao))
-	users.PUT(   "/:id", updateUser(dao))
+
+	users.GET("/:id", getUser(dao))
+	users.PUT("/:id", updateUser(dao))
 	users.DELETE("/:id", deleteUser(dao))
 }

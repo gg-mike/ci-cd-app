@@ -15,7 +15,7 @@ import (
 )
 
 type DAO[T, TShort any] struct {
-	DB     *gorm.DB
+	DB *gorm.DB
 
 	PKCond func(id uuid.UUID) T
 	Filter func(ctx *gin.Context) (map[string]any, error)
@@ -50,10 +50,10 @@ func getBody[T any](ctx *gin.Context, raw *map[string]any, m *T) error {
 		return err
 	}
 	buf := new(bytes.Buffer)
-  if err := json.NewEncoder(buf).Encode(raw); err != nil {
+	if err := json.NewEncoder(buf).Encode(raw); err != nil {
 		return err
 	}
-  if err := json.NewDecoder(buf).Decode(m); err != nil {
+	if err := json.NewDecoder(buf).Decode(m); err != nil {
 		return err
 	}
 	return nil
@@ -88,7 +88,9 @@ func (dao *DAO[T, TShort]) GetMany(ctx *gin.Context) {
 
 	o := new([]TShort)
 	_db := dao.DB.Model(new(T))
-	for key, value := range filters { _db = _db.Where(key, value) }
+	for key, value := range filters {
+		_db = _db.Where(key, value)
+	}
 	err = _db.Offset(offset).Limit(limit).Order(order).Find(o).Error
 	switch err {
 	case nil:
@@ -168,6 +170,6 @@ func (dao *DAO[T, TShort]) Delete(ctx *gin.Context) {
 		util.MessageResponse(ctx, http.StatusInternalServerError, "database error: %v", err)
 		return
 	}
-	
+
 	util.MessageResponse(ctx, http.StatusOK, "Deleted record successfully")
 }

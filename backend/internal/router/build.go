@@ -65,12 +65,12 @@ func updateBuild(dao dao.DAO[model.Build, model.BuildShort]) gin.HandlerFunc { r
 
 func InitBuildGroup(db *gorm.DB, rg *gin.RouterGroup) {
 	dao := controller.InitBuildDAO(db)
-	
+
 	builds := rg.Group("/builds")
-	
-	builds.GET( "", allBuilds(dao))
+
+	builds.GET("", allBuilds(dao))
 	builds.POST("", createBuild(dao))
-	
+
 	builds.GET("/:id", getBuild(dao))
 	builds.PUT("/:id", updateBuild(dao))
 }

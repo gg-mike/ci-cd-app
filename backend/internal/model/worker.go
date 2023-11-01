@@ -23,17 +23,17 @@ const (
 )
 
 type WorkerCore struct {
-	Name     string       `json:"name"     gorm:"uniqueIndex:idx_workers;not null"`
-	Address  string       `json:"address"  gorm:"not null"`
-	System   string       `json:"system"   gorm:"not null"`
-	Type     WorkerType   `json:"type"     gorm:"not null"`
-	Username string       `json:"username" gorm:"not null"`
+	Name     string     `json:"name"     gorm:"uniqueIndex:idx_workers;not null"`
+	Address  string     `json:"address"  gorm:"not null"`
+	System   string     `json:"system"   gorm:"not null"`
+	Type     WorkerType `json:"type"     gorm:"not null"`
+	Username string     `json:"username" gorm:"not null"`
 }
 
 type Worker struct {
 	WorkerCore
-	Status     WorkerStatus `json:"status" gorm:"not null;default:0"`
-	Builds     []Build      `json:"builds" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;not null"`
+	Status WorkerStatus `json:"status" gorm:"not null;default:0"`
+	Builds []Build      `json:"builds" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;not null"`
 	Common
 }
 
@@ -52,7 +52,7 @@ func (m *Worker) AfterCreate(tx *gorm.DB) error {
 	if !ok {
 		return errors.New("no obj given in instance")
 	}
-	return vault.Set(m.ID.String(), map[string]any{ "value": obj.(map[string]any)["private_key"] })
+	return vault.Set(m.ID.String(), map[string]any{"value": obj.(map[string]any)["private_key"]})
 }
 
 func (m *Worker) BeforeUpdate(tx *gorm.DB) error {
@@ -64,7 +64,7 @@ func (m *Worker) AfterUpdate(tx *gorm.DB) error {
 	if !ok {
 		return errors.New("no obj given in instance")
 	}
-	return vault.Set(m.ID.String(), map[string]any{ "value": obj.(map[string]any)["private_key"] })
+	return vault.Set(m.ID.String(), map[string]any{"value": obj.(map[string]any)["private_key"]})
 }
 
 func (m *Worker) BeforeDelete(tx *gorm.DB) error {

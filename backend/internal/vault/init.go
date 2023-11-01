@@ -28,7 +28,7 @@ func Init(address, token string) error {
 
 func Set(key string, data map[string]any) error {
 	ctx := context.Background()
-	_, err := client.Secrets.KvV2Write(ctx, key, schema.KvV2WriteRequest{ Data: data }, vault.WithMountPath("secret"))
+	_, err := client.Secrets.KvV2Write(ctx, key, schema.KvV2WriteRequest{Data: data}, vault.WithMountPath("secret"))
 	return err
 }
 

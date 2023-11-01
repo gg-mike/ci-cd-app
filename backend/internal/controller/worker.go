@@ -13,19 +13,23 @@ func InitWorkerDAO(db *gorm.DB) dao.DAO[model.Worker, model.WorkerShort] {
 		filters := map[string]any{}
 		for key := range ctx.Request.URL.Query() {
 			switch key {
-			case "name":   filters["name   LIKE ?"] = "%" + ctx.Query(key) + "%"
-			case "system": filters["system LIKE ?"] = "%" + ctx.Query(key) + "%"
-			case "status": filters["status IN ?"]   = ctx.QueryArray(key)
-			case "type":   filters["type   IN ?"]   = ctx.QueryArray(key)
+			case "name":
+				filters["name   LIKE ?"] = "%" + ctx.Query(key) + "%"
+			case "system":
+				filters["system LIKE ?"] = "%" + ctx.Query(key) + "%"
+			case "status":
+				filters["status IN ?"] = ctx.QueryArray(key)
+			case "type":
+				filters["type   IN ?"] = ctx.QueryArray(key)
 			}
 		}
-	
+
 		return filters, nil
 	}
 
-	return dao.DAO[model.Worker, model.WorkerShort] {
-		DB: db,
-		PKCond: func(id uuid.UUID) model.Worker { return model.Worker { Common: model.Common { ID: id } }},
+	return dao.DAO[model.Worker, model.WorkerShort]{
+		DB:     db,
+		PKCond: func(id uuid.UUID) model.Worker { return model.Worker{Common: model.Common{ID: id}} },
 		Filter: filter,
 	}
 }

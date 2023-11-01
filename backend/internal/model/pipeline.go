@@ -16,17 +16,17 @@ type PipelineCore struct {
 // TODO: replace cascade constraint with trigger (issue: https://github.com/go-gorm/gorm/issues/5001)
 type Pipeline struct {
 	PipelineCore
-	LastRev      string         `json:"last_rev"  gorm:"not null"`
-	Config       PipelineConfig `json:"config"    gorm:"not null;serializer:json"`
-	Variables    []Variable     `json:"variables" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;not null"`
-	Secrets      []Secret       `json:"secrets"   gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;not null"`
-	Builds       []Build        `json:"builds"    gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;not null"`
+	LastRev   string         `json:"last_rev"  gorm:"not null"`
+	Config    PipelineConfig `json:"config"    gorm:"not null;serializer:json"`
+	Variables []Variable     `json:"variables" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;not null"`
+	Secrets   []Secret       `json:"secrets"   gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;not null"`
+	Builds    []Build        `json:"builds"    gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;not null"`
 	Common
 }
 
 type PipelineCreate struct {
 	PipelineCore
-	Config       PipelineConfig `json:"config"`
+	Config PipelineConfig `json:"config"`
 }
 
 type PipelineShort struct {
@@ -34,13 +34,13 @@ type PipelineShort struct {
 	Common
 }
 
-type PipelineConfig struct{
-	System   string   `json:"system"`
-	Image    string   `json:"image"`
-	Steps    []struct {
+type PipelineConfig struct {
+	System string `json:"system"`
+	Image  string `json:"image"`
+	Steps  []struct {
 		Name     string   `json:"name"`
 		Commands []string `json:"commands"`
-	}                 `json:"steps"`
+	} `json:"steps"`
 }
 
 func (m *Pipeline) BeforeDelete(tx *gorm.DB) error {
