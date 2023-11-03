@@ -20,6 +20,16 @@ func Init(dbUrl string, migrate bool) error {
 		return nil
 	}
 
+	if db.Migrator().HasTable(&model.Secret{}) {
+		db.Migrator().DropColumn(&model.Secret{}, "unique")
+		db.Migrator().DropIndex(&model.Secret{}, "idx_secrets")
+	}
+
+	if db.Migrator().HasTable(&model.Variable{}) {
+		db.Migrator().DropColumn(&model.Variable{}, "unique")
+		db.Migrator().DropIndex(&model.Variable{}, "idx_variables")
+	}
+
 	if err = db.AutoMigrate(
 		&model.Worker{},
 		&model.Project{},

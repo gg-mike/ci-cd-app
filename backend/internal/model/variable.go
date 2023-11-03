@@ -9,7 +9,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// Migrating table twice causes error (issue: https://github.com/go-gorm/gorm/issues/4946)
 type Variable struct {
 	ID         uuid.UUID  `json:"id"          gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 	Key        string     `json:"key"         gorm:"not null"`
