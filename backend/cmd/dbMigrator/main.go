@@ -21,8 +21,8 @@ func main() {
 	if err != nil {
 		logger.Basic(zerolog.FatalLevel, "main").Msgf("Missing DB_URL variable")
 	}
-	_, err = db.Init(dbUrl, true)
-	if err != nil {
+
+	if err = db.Init(dbUrl, true); err != nil {
 		logger.Basic(zerolog.FatalLevel, "main").Msgf("Error while migrating database: %v", err)
 	}
 }

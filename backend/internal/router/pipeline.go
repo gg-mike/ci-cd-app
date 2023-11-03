@@ -5,7 +5,6 @@ import (
 	"github.com/gg-mike/ci-cd-app/backend/internal/controller/dao"
 	"github.com/gg-mike/ci-cd-app/backend/internal/model"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 // @Summary  Get all pipelines
@@ -33,7 +32,7 @@ func allPipelines(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerF
 // @Tags     pipelines
 // @Accept   json
 // @Produce  json
-// @Param    pipeline body model.PipelineCreate true "New pipeline entry"
+// @Param    pipeline body model.PipelineInput true "New pipeline entry"
 // @Success  201 {object} model.Pipeline "Newly created pipeline"
 // @Failure  400 {object} util.Message   "Error in params"
 // @Failure  501 {object} util.Message   "Endpoint not implemented"
@@ -60,7 +59,7 @@ func getPipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFu
 // @Accept   json
 // @Produce  json
 // @Param    id       path string               true "Pipeline ID"
-// @Param    pipeline body model.PipelineCreate true "Updated pipeline entry"
+// @Param    pipeline body model.PipelineInput true "Updated pipeline entry"
 // @Success  200 {object} model.Pipeline "Updated pipeline"
 // @Failure  400 {object} util.Message   "Error in params"
 // @Failure  501 {object} util.Message   "Endpoint not implemented"
@@ -83,8 +82,8 @@ func deletePipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.Handle
 	return dao.Delete
 }
 
-func InitPipelineGroup(db *gorm.DB, rg *gin.RouterGroup) {
-	dao := controller.InitPipelineDAO(db)
+func InitPipelineGroup(rg *gin.RouterGroup) {
+	dao := controller.InitPipelineDAO()
 
 	pipelines := rg.Group("/pipelines")
 

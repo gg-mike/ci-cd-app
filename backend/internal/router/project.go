@@ -5,7 +5,6 @@ import (
 	"github.com/gg-mike/ci-cd-app/backend/internal/controller/dao"
 	"github.com/gg-mike/ci-cd-app/backend/internal/model"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 // @Summary  Get all projects
@@ -30,7 +29,7 @@ func allProjects(dao dao.DAO[model.Project, model.ProjectShort]) gin.HandlerFunc
 // @Tags     projects
 // @Accept   json
 // @Produce  json
-// @Param    project body model.ProjectCreate true "New project entry"
+// @Param    project body model.ProjectInput true "New project entry"
 // @Success  200 {object} model.Project "Newly created project"
 // @Failure  400 {object} util.Message  "Error in params"
 // @Failure  501 {object} util.Message  "Endpoint not implemented"
@@ -54,8 +53,8 @@ func getProject(dao dao.DAO[model.Project, model.ProjectShort]) gin.HandlerFunc 
 // @Tags     projects
 // @Accept   json
 // @Produce  json
-// @Param    id      path string              true "Project ID"
-// @Param    project body model.ProjectCreate true "Updated project entry"
+// @Param    id      path string             true "Project ID"
+// @Param    project body model.ProjectInput true "Updated project entry"
 // @Success  200 {object} model.Project "Updated project"
 // @Failure  400 {object} util.Message  "Error in params"
 // @Failure  501 {object} util.Message  "Endpoint not implemented"
@@ -74,8 +73,8 @@ func updateProject(dao dao.DAO[model.Project, model.ProjectShort]) gin.HandlerFu
 // @Router   /projects/{id} [delete]
 func deleteProject(dao dao.DAO[model.Project, model.ProjectShort]) gin.HandlerFunc { return dao.Delete }
 
-func InitProjectGroup(db *gorm.DB, rg *gin.RouterGroup) {
-	dao := controller.InitProjectDAO(db)
+func InitProjectGroup(rg *gin.RouterGroup) {
+	dao := controller.InitProjectDAO()
 
 	projects := rg.Group("/projects")
 

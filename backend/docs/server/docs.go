@@ -230,7 +230,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.BuildCreate"
+                            "$ref": "#/definitions/model.BuildInput"
                         }
                     }
                 ],
@@ -328,7 +328,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.BuildCreate"
+                            "$ref": "#/definitions/model.BuildInput"
                         }
                     }
                 ],
@@ -454,7 +454,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.PipelineCreate"
+                            "$ref": "#/definitions/model.PipelineInput"
                         }
                     }
                 ],
@@ -552,7 +552,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.PipelineCreate"
+                            "$ref": "#/definitions/model.PipelineInput"
                         }
                     }
                 ],
@@ -717,7 +717,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.ProjectCreate"
+                            "$ref": "#/definitions/model.ProjectInput"
                         }
                     }
                 ],
@@ -815,7 +815,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.ProjectCreate"
+                            "$ref": "#/definitions/model.ProjectInput"
                         }
                     }
                 ],
@@ -931,7 +931,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.SecretShort"
+                                "$ref": "#/definitions/model.Secret"
                             }
                         }
                     },
@@ -974,7 +974,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.SecretCreate"
+                            "$ref": "#/definitions/model.SecretInput"
                         }
                     }
                 ],
@@ -1027,7 +1027,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.SecretCreate"
+                            "$ref": "#/definitions/model.SecretInput"
                         }
                     }
                 ],
@@ -1137,7 +1137,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.UserShort"
+                                "$ref": "#/definitions/model.User"
                             }
                         }
                     },
@@ -1180,7 +1180,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserCreate"
+                            "$ref": "#/definitions/model.UserInput"
                         }
                     }
                 ],
@@ -1278,7 +1278,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserCreate"
+                            "$ref": "#/definitions/model.UserInput"
                         }
                     }
                 ],
@@ -1388,7 +1388,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.VariableShort"
+                                "$ref": "#/definitions/model.Variable"
                             }
                         }
                     },
@@ -1431,7 +1431,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.VariableCreate"
+                            "$ref": "#/definitions/model.VariableInput"
                         }
                     }
                 ],
@@ -1484,7 +1484,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.VariableCreate"
+                            "$ref": "#/definitions/model.VariableInput"
                         }
                     }
                 ],
@@ -1663,7 +1663,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.WorkerCreate"
+                            "$ref": "#/definitions/model.WorkerInput"
                         }
                     }
                 ],
@@ -1761,7 +1761,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.WorkerCreate"
+                            "$ref": "#/definitions/model.WorkerInput"
                         }
                     }
                 ],
@@ -1866,13 +1866,10 @@ const docTemplate = `{
                 }
             }
         },
-        "model.BuildCreate": {
+        "model.BuildInput": {
             "type": "object",
             "properties": {
                 "pipeline_id": {
-                    "type": "string"
-                },
-                "worker_id": {
                     "type": "string"
                 }
             }
@@ -1886,8 +1883,14 @@ const docTemplate = `{
                 "command": {
                     "type": "string"
                 },
+                "idx": {
+                    "type": "integer"
+                },
                 "output": {
                     "type": "string"
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },
@@ -1912,6 +1915,9 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "status": {
+                    "$ref": "#/definitions/model.BuildStatus"
+                },
                 "steps": {
                     "type": "array",
                     "items": {
@@ -1922,7 +1928,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "worker_id": {
-                    "type": "string"
+                    "$ref": "#/definitions/uuid.NullUUID"
                 }
             }
         },
@@ -1967,6 +1973,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "number": {
+                    "type": "integer"
+                },
                 "updated_at": {
                     "type": "string"
                 }
@@ -1975,22 +1984,10 @@ const docTemplate = `{
         "model.BuildStepShort": {
             "type": "object",
             "properties": {
-                "build_id": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
                 "duration": {
                     "$ref": "#/definitions/time.Duration"
                 },
-                "id": {
-                    "type": "string"
-                },
                 "name": {
-                    "type": "string"
-                },
-                "updated_at": {
                     "type": "string"
                 }
             }
@@ -2051,18 +2048,7 @@ const docTemplate = `{
                 "steps": {
                     "type": "array",
                     "items": {
-                        "type": "object",
-                        "properties": {
-                            "commands": {
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                }
-                            },
-                            "name": {
-                                "type": "string"
-                            }
-                        }
+                        "$ref": "#/definitions/model.PipelineConfigStep"
                     }
                 },
                 "system": {
@@ -2070,7 +2056,21 @@ const docTemplate = `{
                 }
             }
         },
-        "model.PipelineCreate": {
+        "model.PipelineConfigStep": {
+            "type": "object",
+            "properties": {
+                "commands": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.PipelineInput": {
             "type": "object",
             "properties": {
                 "branch": {
@@ -2148,7 +2148,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.ProjectCreate": {
+        "model.ProjectInput": {
             "type": "object",
             "properties": {
                 "name": {
@@ -2192,52 +2192,29 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "pipeline_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
+                    "type": "string"
                 },
                 "project_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
+                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"
                 }
             }
         },
-        "model.SecretCreate": {
+        "model.SecretInput": {
             "type": "object",
             "properties": {
                 "key": {
                     "type": "string"
                 },
                 "pipeline_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
+                    "type": "string"
                 },
                 "project_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
+                    "type": "string"
                 },
                 "value": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.SecretShort": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "key": {
-                    "type": "string"
-                },
-                "pipeline_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
-                },
-                "project_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
-                },
-                "updated_at": {
                     "type": "string"
                 }
             }
@@ -2259,26 +2236,9 @@ const docTemplate = `{
                 }
             }
         },
-        "model.UserCreate": {
+        "model.UserInput": {
             "type": "object",
             "properties": {
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.UserShort": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
                 "username": {
                     "type": "string"
                 }
@@ -2297,68 +2257,33 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "pipeline_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
+                    "type": "string"
                 },
                 "project_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
+                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"
                 },
                 "value": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
+                    "type": "string"
                 }
             }
         },
-        "model.VariableCreate": {
+        "model.VariableInput": {
             "type": "object",
             "properties": {
                 "key": {
                     "type": "string"
                 },
                 "pipeline_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
+                    "type": "string"
                 },
                 "project_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
-                },
-                "value": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                }
-            }
-        },
-        "model.VariableShort": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "key": {
-                    "type": "string"
-                },
-                "pipeline_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
-                },
-                "project_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
-                },
-                "updated_at": {
                     "type": "string"
                 },
                 "value": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
+                    "type": "string"
                 }
             }
         },
@@ -2400,7 +2325,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.WorkerCreate": {
+        "model.WorkerInput": {
             "type": "object",
             "properties": {
                 "address": {
@@ -2437,6 +2362,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/model.WorkerStatus"
                 },
                 "system": {
                     "type": "string"

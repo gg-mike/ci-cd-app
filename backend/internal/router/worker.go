@@ -5,7 +5,6 @@ import (
 	"github.com/gg-mike/ci-cd-app/backend/internal/controller/dao"
 	"github.com/gg-mike/ci-cd-app/backend/internal/model"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 // @Summary  Get all workers
@@ -32,7 +31,7 @@ func allWorkers(dao dao.DAO[model.Worker, model.WorkerShort]) gin.HandlerFunc { 
 // @Tags     workers
 // @Accept   json
 // @Produce  json
-// @Param    worker body model.WorkerCreate true "New worker entry"
+// @Param    worker body model.WorkerInput true "New worker entry"
 // @Success  200 {object} model.Worker "Newly created worker"
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
@@ -56,8 +55,8 @@ func getWorker(dao dao.DAO[model.Worker, model.WorkerShort]) gin.HandlerFunc { r
 // @Tags     workers
 // @Accept   json
 // @Produce  json
-// @Param    id     path string             true "Worker ID"
-// @Param    worker body model.WorkerCreate true "Updated worker entry"
+// @Param    id     path string            true "Worker ID"
+// @Param    worker body model.WorkerInput true "Updated worker entry"
 // @Success  200 {object} model.Worker "Updated worker"
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
@@ -75,8 +74,8 @@ func updateWorker(dao dao.DAO[model.Worker, model.WorkerShort]) gin.HandlerFunc 
 // @Router   /workers/{id} [delete]
 func deleteWorker(dao dao.DAO[model.Worker, model.WorkerShort]) gin.HandlerFunc { return dao.Delete }
 
-func InitWorkerGroup(db *gorm.DB, rg *gin.RouterGroup) {
-	dao := controller.InitWorkerDAO(db)
+func InitWorkerGroup(rg *gin.RouterGroup) {
+	dao := controller.InitWorkerDAO()
 
 	workers := rg.Group("/workers")
 

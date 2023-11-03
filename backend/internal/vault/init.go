@@ -26,19 +26,43 @@ func Init(address, token string) error {
 	return nil
 }
 
-func Set(key string, data map[string]any) error {
+func SetMap(key string, data map[string]any) error {
 	ctx := context.Background()
-	_, err := client.Secrets.KvV2Write(ctx, key, schema.KvV2WriteRequest{Data: data}, vault.WithMountPath("secret"))
+	_, err := client.Secrets.KvV2Write(
+		ctx,
+		key,
+		schema.KvV2WriteRequest{Data: data},
+		vault.WithMountPath("secret"))
 	return err
 }
 
-func Get(key string) (map[string]any, error) {
+func SetStr(key string, value string) error {
+	ctx := context.Background()
+	_, err := client.Secrets.KvV2Write(
+		ctx,
+		key,
+		schema.KvV2WriteRequest{Data: map[string]any{"value": value}},
+		vault.WithMountPath("secret"),
+	)
+	return err
+}
+
+func Map(key string) (map[string]any, error) {
 	ctx := context.Background()
 	secret, err := client.Secrets.KvV2Read(ctx, key, vault.WithMountPath("secret"))
 	if err != nil {
 		return map[string]any{}, err
 	}
 	return secret.Data.Data, nil
+}
+
+func Str(key string) (string, error) {
+	ctx := context.Background()
+	secret, err := client.Secrets.KvV2Read(ctx, key, vault.WithMountPath("secret"))
+	if err != nil {
+		return "", err
+	}
+	return secret.Data.Data["value"].(string), nil
 }
 
 func Del(key string) error {

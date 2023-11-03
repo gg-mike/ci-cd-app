@@ -5,7 +5,6 @@ import (
 	"github.com/gg-mike/ci-cd-app/backend/internal/controller/dao"
 	"github.com/gg-mike/ci-cd-app/backend/internal/model"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 // @Summary  Get all build steps
@@ -39,8 +38,8 @@ func getBuildStep(dao dao.DAO[model.BuildStep, model.BuildStepShort]) gin.Handle
 	return dao.GetOne
 }
 
-func InitBuildStepGroup(db *gorm.DB, rg *gin.RouterGroup) {
-	dao := controller.InitBuildStepDAO(db)
+func InitBuildStepGroup(rg *gin.RouterGroup) {
+	dao := controller.InitBuildStepDAO()
 
 	buildSteps := rg.Group("/build_steps")
 

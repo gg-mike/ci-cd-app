@@ -223,7 +223,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.BuildCreate"
+                            "$ref": "#/definitions/model.BuildInput"
                         }
                     }
                 ],
@@ -321,7 +321,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.BuildCreate"
+                            "$ref": "#/definitions/model.BuildInput"
                         }
                     }
                 ],
@@ -447,7 +447,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.PipelineCreate"
+                            "$ref": "#/definitions/model.PipelineInput"
                         }
                     }
                 ],
@@ -545,7 +545,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.PipelineCreate"
+                            "$ref": "#/definitions/model.PipelineInput"
                         }
                     }
                 ],
@@ -710,7 +710,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.ProjectCreate"
+                            "$ref": "#/definitions/model.ProjectInput"
                         }
                     }
                 ],
@@ -808,7 +808,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.ProjectCreate"
+                            "$ref": "#/definitions/model.ProjectInput"
                         }
                     }
                 ],
@@ -924,7 +924,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.SecretShort"
+                                "$ref": "#/definitions/model.Secret"
                             }
                         }
                     },
@@ -967,7 +967,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.SecretCreate"
+                            "$ref": "#/definitions/model.SecretInput"
                         }
                     }
                 ],
@@ -1020,7 +1020,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.SecretCreate"
+                            "$ref": "#/definitions/model.SecretInput"
                         }
                     }
                 ],
@@ -1130,7 +1130,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.UserShort"
+                                "$ref": "#/definitions/model.User"
                             }
                         }
                     },
@@ -1173,7 +1173,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserCreate"
+                            "$ref": "#/definitions/model.UserInput"
                         }
                     }
                 ],
@@ -1271,7 +1271,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserCreate"
+                            "$ref": "#/definitions/model.UserInput"
                         }
                     }
                 ],
@@ -1381,7 +1381,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.VariableShort"
+                                "$ref": "#/definitions/model.Variable"
                             }
                         }
                     },
@@ -1424,7 +1424,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.VariableCreate"
+                            "$ref": "#/definitions/model.VariableInput"
                         }
                     }
                 ],
@@ -1477,7 +1477,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.VariableCreate"
+                            "$ref": "#/definitions/model.VariableInput"
                         }
                     }
                 ],
@@ -1656,7 +1656,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.WorkerCreate"
+                            "$ref": "#/definitions/model.WorkerInput"
                         }
                     }
                 ],
@@ -1754,7 +1754,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.WorkerCreate"
+                            "$ref": "#/definitions/model.WorkerInput"
                         }
                     }
                 ],
@@ -1859,13 +1859,10 @@
                 }
             }
         },
-        "model.BuildCreate": {
+        "model.BuildInput": {
             "type": "object",
             "properties": {
                 "pipeline_id": {
-                    "type": "string"
-                },
-                "worker_id": {
                     "type": "string"
                 }
             }
@@ -1879,8 +1876,14 @@
                 "command": {
                     "type": "string"
                 },
+                "idx": {
+                    "type": "integer"
+                },
                 "output": {
                     "type": "string"
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },
@@ -1905,6 +1908,9 @@
                         "type": "string"
                     }
                 },
+                "status": {
+                    "$ref": "#/definitions/model.BuildStatus"
+                },
                 "steps": {
                     "type": "array",
                     "items": {
@@ -1915,7 +1921,7 @@
                     "type": "string"
                 },
                 "worker_id": {
-                    "type": "string"
+                    "$ref": "#/definitions/uuid.NullUUID"
                 }
             }
         },
@@ -1960,6 +1966,9 @@
                 "name": {
                     "type": "string"
                 },
+                "number": {
+                    "type": "integer"
+                },
                 "updated_at": {
                     "type": "string"
                 }
@@ -1968,22 +1977,10 @@
         "model.BuildStepShort": {
             "type": "object",
             "properties": {
-                "build_id": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
                 "duration": {
                     "$ref": "#/definitions/time.Duration"
                 },
-                "id": {
-                    "type": "string"
-                },
                 "name": {
-                    "type": "string"
-                },
-                "updated_at": {
                     "type": "string"
                 }
             }
@@ -2044,18 +2041,7 @@
                 "steps": {
                     "type": "array",
                     "items": {
-                        "type": "object",
-                        "properties": {
-                            "commands": {
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                }
-                            },
-                            "name": {
-                                "type": "string"
-                            }
-                        }
+                        "$ref": "#/definitions/model.PipelineConfigStep"
                     }
                 },
                 "system": {
@@ -2063,7 +2049,21 @@
                 }
             }
         },
-        "model.PipelineCreate": {
+        "model.PipelineConfigStep": {
+            "type": "object",
+            "properties": {
+                "commands": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.PipelineInput": {
             "type": "object",
             "properties": {
                 "branch": {
@@ -2141,7 +2141,7 @@
                 }
             }
         },
-        "model.ProjectCreate": {
+        "model.ProjectInput": {
             "type": "object",
             "properties": {
                 "name": {
@@ -2185,52 +2185,29 @@
                     "type": "string"
                 },
                 "pipeline_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
+                    "type": "string"
                 },
                 "project_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
+                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"
                 }
             }
         },
-        "model.SecretCreate": {
+        "model.SecretInput": {
             "type": "object",
             "properties": {
                 "key": {
                     "type": "string"
                 },
                 "pipeline_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
+                    "type": "string"
                 },
                 "project_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
+                    "type": "string"
                 },
                 "value": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.SecretShort": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "key": {
-                    "type": "string"
-                },
-                "pipeline_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
-                },
-                "project_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
-                },
-                "updated_at": {
                     "type": "string"
                 }
             }
@@ -2252,26 +2229,9 @@
                 }
             }
         },
-        "model.UserCreate": {
+        "model.UserInput": {
             "type": "object",
             "properties": {
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.UserShort": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
                 "username": {
                     "type": "string"
                 }
@@ -2290,68 +2250,33 @@
                     "type": "string"
                 },
                 "pipeline_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
+                    "type": "string"
                 },
                 "project_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
+                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"
                 },
                 "value": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
+                    "type": "string"
                 }
             }
         },
-        "model.VariableCreate": {
+        "model.VariableInput": {
             "type": "object",
             "properties": {
                 "key": {
                     "type": "string"
                 },
                 "pipeline_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
+                    "type": "string"
                 },
                 "project_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
-                },
-                "value": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                }
-            }
-        },
-        "model.VariableShort": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "key": {
-                    "type": "string"
-                },
-                "pipeline_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
-                },
-                "project_id": {
-                    "$ref": "#/definitions/uuid.NullUUID"
-                },
-                "updated_at": {
                     "type": "string"
                 },
                 "value": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
+                    "type": "string"
                 }
             }
         },
@@ -2393,7 +2318,7 @@
                 }
             }
         },
-        "model.WorkerCreate": {
+        "model.WorkerInput": {
             "type": "object",
             "properties": {
                 "address": {
@@ -2430,6 +2355,9 @@
                 },
                 "name": {
                     "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/model.WorkerStatus"
                 },
                 "system": {
                     "type": "string"

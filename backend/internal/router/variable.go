@@ -5,7 +5,6 @@ import (
 	"github.com/gg-mike/ci-cd-app/backend/internal/controller/dao"
 	"github.com/gg-mike/ci-cd-app/backend/internal/model"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 // @Summary  Get all variables
@@ -17,12 +16,12 @@ import (
 // @Param    size  query int    false "Page size"
 // @Param    order query string false "Order by field"
 // @Param    name  query string false "Variable name (pattern)"
-// @Success  200 {object} []model.VariableShort "List of variables"
-// @Failure  400 {object} util.Message          "Error in request"
-// @Failure  404 {object} util.Message          "No records found"
-// @Failure  500 {object} util.Message          "Database error"
+// @Success  200 {object} []model.Variable "List of variables"
+// @Failure  400 {object} util.Message     "Error in request"
+// @Failure  404 {object} util.Message     "No records found"
+// @Failure  500 {object} util.Message     "Database error"
 // @Router   /variables [get]
-func allVariables(dao dao.DAO[model.Variable, model.VariableShort]) gin.HandlerFunc {
+func allVariables(dao dao.DAO[model.Variable, model.Variable]) gin.HandlerFunc {
 	return dao.GetMany
 }
 
@@ -31,12 +30,12 @@ func allVariables(dao dao.DAO[model.Variable, model.VariableShort]) gin.HandlerF
 // @Tags     variables
 // @Accept   json
 // @Produce  json
-// @Param    variable body model.VariableCreate true "New variable entry"
+// @Param    variable body model.VariableInput true "New variable entry"
 // @Success  200 {object} model.Variable "Newly created variable"
 // @Failure  400 {object} util.Message   "Error in params"
 // @Failure  501 {object} util.Message   "Endpoint not implemented"
 // @Router   /variables [post]
-func createVariable(dao dao.DAO[model.Variable, model.VariableShort]) gin.HandlerFunc {
+func createVariable(dao dao.DAO[model.Variable, model.Variable]) gin.HandlerFunc {
 	return dao.Create
 }
 
@@ -45,13 +44,13 @@ func createVariable(dao dao.DAO[model.Variable, model.VariableShort]) gin.Handle
 // @Tags     variables
 // @Accept   json
 // @Produce  json
-// @Param    id       path string               true "Variable ID"
-// @Param    variable body model.VariableCreate true "Updated variable entry"
+// @Param    id       path string              true "Variable ID"
+// @Param    variable body model.VariableInput true "Updated variable entry"
 // @Success  200 {object} model.Variable "Updated variable"
 // @Failure  400 {object} util.Message   "Error in params"
 // @Failure  501 {object} util.Message   "Endpoint not implemented"
 // @Router   /variables/{id} [put]
-func updateVariable(dao dao.DAO[model.Variable, model.VariableShort]) gin.HandlerFunc {
+func updateVariable(dao dao.DAO[model.Variable, model.Variable]) gin.HandlerFunc {
 	return dao.Update
 }
 
@@ -64,12 +63,12 @@ func updateVariable(dao dao.DAO[model.Variable, model.VariableShort]) gin.Handle
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
 // @Router   /variables/{id} [delete]
-func deleteVariable(dao dao.DAO[model.Variable, model.VariableShort]) gin.HandlerFunc {
+func deleteVariable(dao dao.DAO[model.Variable, model.Variable]) gin.HandlerFunc {
 	return dao.Delete
 }
 
-func InitVariableGroup(db *gorm.DB, rg *gin.RouterGroup) {
-	dao := controller.InitVariableDAO(db)
+func InitVariableGroup(rg *gin.RouterGroup) {
+	dao := controller.InitVariableDAO()
 
 	variables := rg.Group("/variables")
 

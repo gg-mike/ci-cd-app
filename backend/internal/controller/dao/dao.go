@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gg-mike/ci-cd-app/backend/internal/controller/util"
+	"github.com/gg-mike/ci-cd-app/backend/internal/db"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -15,34 +16,8 @@ import (
 )
 
 type DAO[T, TShort any] struct {
-	DB *gorm.DB
-
-	PKCond func(id uuid.UUID) T
-	Filter func(ctx *gin.Context) (map[string]any, error)
-}
-
-func getID(params gin.Params) (uuid.UUID, error) {
-	_id, ok := params.Get("id")
-	if !ok {
-		return uuid.UUID{}, errors.New(`missing param "id"`)
-	}
-	id, err := uuid.Parse(_id)
-	if err != nil {
-		return uuid.UUID{}, errors.New(`error parsing param "id"`)
-	}
-	return id, nil
-}
-
-func getRecord[T any](db *gorm.DB, m *T) (int, error) {
-	err := db.Model(new(T)).Preload(clause.Associations).Where("deleted = ?", false).First(m).Error
-	switch err {
-	case nil:
-		return http.StatusOK, nil
-	case gorm.ErrRecordNotFound:
-		return http.StatusNotFound, errors.New("no record found")
-	default:
-		return http.StatusInternalServerError, fmt.Errorf("database error: %v", err)
-	}
+	Preload func(tx *gorm.DB) *gorm.DB
+	Filter  func(ctx *gin.Context) (map[string]any, error)
 }
 
 func getBody[T any](ctx *gin.Context, raw *map[string]any, m *T) error {
@@ -66,8 +41,7 @@ func (dao *DAO[T, TShort]) GetOne(ctx *gin.Context) {
 		return
 	}
 
-	m := dao.PKCond(id)
-	code, err := getRecord[T](dao.DB, &m)
+	m, code, err := getRecordFromID[T](dao, id)
 	if err != nil {
 		util.MessageResponse(ctx, code, err.Error())
 	} else {
@@ -87,7 +61,7 @@ func (dao *DAO[T, TShort]) GetMany(ctx *gin.Context) {
 	}
 
 	o := new([]TShort)
-	_db := dao.DB.Model(new(T))
+	_db := db.Get().Model(new(T))
 	for key, value := range filters {
 		_db = _db.Where(key, value)
 	}
@@ -110,10 +84,31 @@ func (dao *DAO[T, TShort]) Create(ctx *gin.Context) {
 		return
 	}
 
-	err := dao.DB.Model(new(T)).InstanceSet("obj", raw).Create(&m).Error
+	err := db.Get().InstanceSet("raw", raw).Create(&m).Error
 	switch err {
 	case nil:
-		ctx.JSON(http.StatusCreated, m)
+		var mMap map[string]interface{}
+		jsonBytes, err := json.Marshal(m)
+		if err != nil {
+			util.MessageResponse(ctx, http.StatusInternalServerError, err.Error())
+			return
+		}
+		if err := json.Unmarshal(jsonBytes, &mMap); err != nil {
+			util.MessageResponse(ctx, http.StatusInternalServerError, err.Error())
+			return
+		}
+		id, ok := mMap["id"]
+		if !ok {
+			util.MessageResponse(ctx, http.StatusInternalServerError, "missing 'id' in map")
+			return
+		}
+
+		created, code, err := getRecordFromID[T](dao, uuid.MustParse(id.(string)))
+		if err != nil {
+			util.MessageResponse(ctx, code, err.Error())
+			return
+		}
+		ctx.JSON(http.StatusCreated, created)
 	case gorm.ErrForeignKeyViolated:
 		util.MessageResponse(ctx, http.StatusConflict, "incorrect foreign key")
 	default:
@@ -128,8 +123,7 @@ func (dao *DAO[T, TShort]) Update(ctx *gin.Context) {
 		return
 	}
 
-	prev := dao.PKCond(id)
-	code, err := getRecord[T](dao.DB, &prev)
+	prev, code, err := getRecordFromID[T](dao, id)
 	if err != nil {
 		util.MessageResponse(ctx, code, err.Error())
 	}
@@ -140,10 +134,14 @@ func (dao *DAO[T, TShort]) Update(ctx *gin.Context) {
 		return
 	}
 
-	err = dao.DB.Model(&prev).InstanceSet("obj", raw).InstanceSet("prev", prev).Updates(m).Error
+	err = db.Get().Model(&prev).InstanceSet("raw", raw).InstanceSet("prev", prev).Updates(m).Error
 	switch err {
 	case nil:
-		ctx.JSON(http.StatusOK, m)
+		updated, code, err := getRecordFromID[T](dao, id)
+		if err != nil {
+			util.MessageResponse(ctx, code, err.Error())
+		}
+		ctx.JSON(http.StatusOK, updated)
 	case gorm.ErrForeignKeyViolated:
 		util.MessageResponse(ctx, http.StatusConflict, "incorrect foreign key")
 	default:
@@ -158,18 +156,47 @@ func (dao *DAO[T, TShort]) Delete(ctx *gin.Context) {
 		return
 	}
 
-	m := dao.PKCond(id)
-	code, err := getRecord[T](dao.DB, &m)
+	m, code, err := getRecordFromID[T](dao, id)
 	if err != nil {
 		util.MessageResponse(ctx, code, err.Error())
 		return
 	}
 
 	_, isForce := ctx.GetQuery("force")
-	if err = dao.DB.Model(new(T)).InstanceSet("force", isForce).Delete(&m).Error; err != nil {
+	if err = db.Get().Model(new(T)).InstanceSet("force", isForce).Delete(&m).Error; err != nil {
 		util.MessageResponse(ctx, http.StatusInternalServerError, "database error: %v", err)
 		return
 	}
 
 	util.MessageResponse(ctx, http.StatusOK, "Deleted record successfully")
+}
+
+func getID(params gin.Params) (uuid.UUID, error) {
+	_id, ok := params.Get("id")
+	if !ok {
+		return uuid.UUID{}, errors.New(`missing param "id"`)
+	}
+	id, err := uuid.Parse(_id)
+	if err != nil {
+		return uuid.UUID{}, errors.New(`error parsing param "id"`)
+	}
+	return id, nil
+}
+
+func getRecordFromID[T, TShort any](dao *DAO[T, TShort], id uuid.UUID) (T, int, error) {
+	var err error
+	m := new(T)
+	if dao.Preload == nil {
+		err = db.Get().Preload(clause.Associations).First(m, "id = ?", id).Error
+	} else {
+		err = dao.Preload(db.Get()).First(m, "id = ?", id).Error
+	}
+	switch err {
+	case nil:
+		return *m, http.StatusOK, nil
+	case gorm.ErrRecordNotFound:
+		return *m, http.StatusNotFound, errors.New("no record found")
+	default:
+		return *m, http.StatusInternalServerError, fmt.Errorf("database error: %v", err)
+	}
 }

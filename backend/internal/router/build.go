@@ -5,7 +5,6 @@ import (
 	"github.com/gg-mike/ci-cd-app/backend/internal/controller/dao"
 	"github.com/gg-mike/ci-cd-app/backend/internal/model"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 // @Summary  Get all builds
@@ -31,7 +30,7 @@ func allBuilds(dao dao.DAO[model.Build, model.BuildShort]) gin.HandlerFunc { ret
 // @Tags     builds
 // @Accept   json
 // @Produce  json
-// @Param    build body model.BuildCreate true "New build entry"
+// @Param    build body model.BuildInput true "New build entry"
 // @Success  201 {object} model.Build  "Newly created build"
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
@@ -55,16 +54,16 @@ func getBuild(dao dao.DAO[model.Build, model.BuildShort]) gin.HandlerFunc { retu
 // @Tags     builds
 // @Accept   json
 // @Produce  json
-// @Param    id    path string            true "Build ID"
-// @Param    build body model.BuildCreate true "Updated build entry"
+// @Param    id    path string           true "Build ID"
+// @Param    build body model.BuildInput true "Updated build entry"
 // @Success  200 {object} model.Build  "Updated build"
 // @Failure  400 {object} util.Message "Error in params"
 // @Failure  501 {object} util.Message "Endpoint not implemented"
 // @Router   /builds/{id} [put]
 func updateBuild(dao dao.DAO[model.Build, model.BuildShort]) gin.HandlerFunc { return dao.Update }
 
-func InitBuildGroup(db *gorm.DB, rg *gin.RouterGroup) {
-	dao := controller.InitBuildDAO(db)
+func InitBuildGroup(rg *gin.RouterGroup) {
+	dao := controller.InitBuildDAO()
 
 	builds := rg.Group("/builds")
 

@@ -2,33 +2,28 @@ package model
 
 import (
 	"errors"
+	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 // TODO: rbac
-type UserCore struct {
-	Username string `json:"username" gorm:"uniqueIndex:idx_users"`
-}
-
 type User struct {
-	UserCore
-	Common
+	ID        uuid.UUID `json:"id"         gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+	Username  string    `json:"username"   gorm:"uniqueIndex:idx_users"`
+	CreatedAt time.Time `json:"created_at" gorm:"default:now()"`
+	UpdatedAt time.Time `json:"updated_at" gorm:"default:now()"`
 }
 
-type UserCreate struct {
-	UserCore
-}
-
-type UserShort struct {
-	UserCore
-	Common
+type UserInput struct {
+	Username string `json:"username"`
 }
 
 func (m *User) BeforeUpdate(tx *gorm.DB) error {
 	prev, ok := tx.InstanceGet("prev")
 	if !ok {
-		return errors.New("prev obj not given")
+		return errors.New("prev user not given")
 	}
 	if prev.(User).Username == "admin" {
 		return errors.New("admin cannot be changed")

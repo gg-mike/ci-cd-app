@@ -7,16 +7,17 @@ import (
 	"gorm.io/gorm"
 )
 
-func Init(dbUrl string, migrate bool) (*gorm.DB, error) {
-	db, err := gorm.Open(postgres.Open(dbUrl), &gorm.Config{
-		Logger: logger.Gorm(),
-	})
+var db *gorm.DB
+
+func Init(dbUrl string, migrate bool) error {
+	var err error
+	db, err = gorm.Open(postgres.Open(dbUrl), &gorm.Config{Logger: logger.Gorm()})
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if !migrate {
-		return db, nil
+		return nil
 	}
 
 	if err = db.AutoMigrate(
@@ -30,7 +31,11 @@ func Init(dbUrl string, migrate bool) (*gorm.DB, error) {
 		&model.User{},
 		&model.Variable{},
 	); err != nil {
-		return nil, err
+		return err
 	}
-	return db, nil
+	return nil
+}
+
+func Get() *gorm.DB {
+	return db
 }

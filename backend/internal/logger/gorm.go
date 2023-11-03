@@ -4,6 +4,7 @@ package logger
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/rs/zerolog"
@@ -47,7 +48,7 @@ func (logger *GormLogger) Trace(ctx context.Context, begin time.Time, fc func() 
 	elapsed := time.Since(begin)
 	sql, _ := fc()
 	fields := map[string]interface{}{
-		"sql":      sql,
+		"sql":      strings.ReplaceAll(sql, "\"", ""),
 		"duration": elapsed,
 	}
 	if logger.SourceField != "" {

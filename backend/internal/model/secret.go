@@ -2,6 +2,8 @@ package model
 
 import (
 	"errors"
+	"strings"
+	"time"
 
 	"github.com/gg-mike/ci-cd-app/backend/internal/vault"
 	"github.com/google/uuid"
@@ -9,46 +11,46 @@ import (
 )
 
 // Migrating table twice causes error (issue: https://github.com/go-gorm/gorm/issues/4946)
-type SecretCore struct {
-	Key        string        `json:"key"         gorm:"not null"`
-	ProjectID  uuid.NullUUID `json:"project_id"  gorm:"type:uuid"`
-	PipelineID uuid.NullUUID `json:"pipeline_id" gorm:"type:uuid"`
-	Unique     string        `json:"-"           gorm:"->;type: text GENERATED ALWAYS AS (key || '/' || COALESCE(project_id::text,'') || '/' || COALESCE(pipeline_id::text,'')) STORED;uniqueIndex:idx_secrets;default:(-)"`
-}
-
 type Secret struct {
-	SecretCore
-	Common
+	ID         uuid.UUID  `json:"id"          gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+	Key        string     `json:"key"         gorm:"not null"`
+	ProjectID  *uuid.UUID `json:"project_id"  gorm:"type:uuid"`
+	PipelineID *uuid.UUID `json:"pipeline_id" gorm:"type:uuid"`
+	Unique     string     `json:"-"           gorm:"->;type: text GENERATED ALWAYS AS (key || '/' || COALESCE(project_id::text,'') || '/' || COALESCE(pipeline_id::text,'')) STORED;uniqueIndex:idx_secrets;default:(-)"`
+	CreatedAt  time.Time  `json:"created_at"  gorm:"default:now()"`
+	UpdatedAt  time.Time  `json:"updated_at"  gorm:"default:now()"`
 }
 
-type SecretCreate struct {
-	SecretCore
-	Value string `json:"value"`
+type SecretInput struct {
+	Key        string     `json:"key"`
+	Value      string     `json:"value"`
+	ProjectID  *uuid.UUID `json:"project_id"`
+	PipelineID *uuid.UUID `json:"pipeline_id"`
 }
 
-type SecretShort struct {
-	SecretCore
-	Common
+func (m *Secret) BeforeCreate(tx *gorm.DB) error {
+	if strings.HasPrefix(m.Key, "_") {
+		return errors.New("secret cannot start with '_'")
+	}
+	return nil
 }
 
 func (m *Secret) AfterCreate(tx *gorm.DB) error {
-	obj, ok := tx.InstanceGet("obj")
+	value, ok := GetFromRaw[string](tx, "value")
 	if !ok {
-		return errors.New("no obj given in instance")
+		return errors.New("no value field given in instance")
 	}
-	return vault.Set(m.ID.String(), map[string]any{"value": obj.(map[string]any)["value"]})
-}
-
-func (m *Secret) BeforeUpdate(tx *gorm.DB) error {
-	return vault.Del(m.ID.String())
+	return vault.SetStr(m.ID.String(), value)
 }
 
 func (m *Secret) AfterUpdate(tx *gorm.DB) error {
-	obj, ok := tx.InstanceGet("obj")
-	if !ok {
-		return errors.New("no obj given in instance")
+	if strings.HasPrefix(m.Key, "_") {
+		return errors.New("secret cannot start with '_'")
 	}
-	return vault.Set(m.ID.String(), map[string]any{"value": obj.(map[string]any)["value"]})
+	if value, ok := GetFromRaw[string](tx, "value"); ok {
+		return vault.SetStr(m.ID.String(), value)
+	}
+	return nil
 }
 
 func (m *Secret) AfterDelete(tx *gorm.DB) error {

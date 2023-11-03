@@ -2,7 +2,10 @@ package model
 
 import (
 	"errors"
+	"fmt"
+	"time"
 
+	"github.com/gg-mike/ci-cd-app/backend/internal/scheduler"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"gorm.io/gorm"
@@ -18,48 +21,67 @@ const (
 	BuildCanceled
 )
 
-type BuildCore struct {
-	WorkerID   uuid.UUID `json:"worker_id"   gorm:"type:uuid;not null"`
-	PipelineID uuid.UUID `json:"pipeline_id" gorm:"type:uuid;index:,unique,composite:idx_builds"`
+func (s BuildStatus) String() string {
+	switch s {
+	case BuildScheduled:
+		return "scheduled"
+	case BuildRunning:
+		return "running"
+	case BuildSuccessful:
+		return "successful"
+	case BuildFailed:
+		return "failed"
+	case BuildCanceled:
+		return "canceled"
+	default:
+		return "unknown"
+	}
 }
 
 type Build struct {
-	BuildCore
-	Number  uint           `json:"number"   gorm:"index:,unique,composite:idx_builds;autoIncrement"`
-	RevList pq.StringArray `json:"rev_list" gorm:"type:text[];not null"`
-	Status  BuildStatus    `json:"status"   gorm:"not null;default:0"`
-	Steps   []BuildStep    `json:"steps"    gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;not null"`
-	Common
+	ID         uuid.UUID      `json:"id"          gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+	Number     uint           `json:"number"      gorm:"index:,unique,composite:idx_builds;autoIncrement"`
+	RevList    pq.StringArray `json:"rev_list"    gorm:"type:text[];not null;default:'{}'"`
+	Status     BuildStatus    `json:"status"      gorm:"not null;default:0"`
+	Steps      []BuildStep    `json:"steps"       gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;not null"`
+	PipelineID uuid.UUID      `json:"pipeline_id" gorm:"type:uuid;index:,unique,composite:idx_builds"`
+	WorkerID   *uuid.UUID     `json:"worker_id"   gorm:"type:uuid"`
+	CreatedAt  time.Time      `json:"created_at"  gorm:"default:now()"`
+	UpdatedAt  time.Time      `json:"updated_at"  gorm:"default:now()"`
 }
 
-type BuildCreate struct {
-	BuildCore
+type BuildInput struct {
+	PipelineID string `json:"pipeline_id"`
 }
 
 type BuildShort struct {
-	BuildCore
-	Number    uint             `json:"number"`
-	RevList   pq.StringArray   `json:"rev_list"`
-	Steps     []BuildStepShort `json:"steps"`
-	Common
+	ID         uuid.UUID        `json:"id"`
+	Number     uint             `json:"number"`
+	RevList    pq.StringArray   `json:"rev_list"    gorm:"type:text[]"`
+	Status     BuildStatus      `json:"status"`
+	Steps      []BuildStepShort `json:"steps"`
+	PipelineID uuid.UUID        `json:"pipeline_id"`
+	WorkerID   uuid.NullUUID    `json:"worker_id,omitempty"`
+	CreatedAt  time.Time        `json:"created_at"`
+	UpdatedAt  time.Time        `json:"updated_at"`
 }
 
 func (m *Build) AfterCreate(tx *gorm.DB) error {
-	// TODO: Schedule build
+	go scheduler.Get().Schedule(m.ID)
 	return nil
 }
 
 func (m *Build) BeforeUpdate(tx *gorm.DB) error {
 	prev, ok := tx.InstanceGet("prev")
 	if !ok {
-		return errors.New("prev obj not given")
+		return errors.New("prev build not given")
 	}
-	if prev.(Build).Status == BuildCanceled {
-		return errors.New("cannot change status of canceled build")
+	switch prev.(Build).Status {
+	case BuildScheduled, BuildRunning:
+		tx.Statement.SetColumn("status", BuildCanceled)
+		return nil
+	default:
+		return fmt.Errorf("cannot change status of build from [%s] to [%s]",
+			prev.(Build).Status.String(), BuildCanceled.String())
 	}
-	if m.Status != BuildCanceled {
-		return errors.New("operation not allowed")
-	}
-	// TODO: Cancel job
-	return nil
 }
