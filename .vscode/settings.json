@@ -25,6 +25,9 @@
     "Healthz",
     "Msgf",
     "Readyz",
+    "workdir",
     "zerolog"
   ],
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "golang.go"
 }

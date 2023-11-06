@@ -12,10 +12,12 @@ import (
 // @Tags     secrets
 // @Accept   json
 // @Produce  json
-// @Param    page  query int    false "Page number"
-// @Param    size  query int    false "Page size"
-// @Param    order query string false "Order by field"
-// @Param    name  query string false "Secret name (pattern)"
+// @Param    page        query int    false "Page number"
+// @Param    size        query int    false "Page size"
+// @Param    order       query string false "Order by field"
+// @Param    key         query string false "Secret key (pattern)"
+// @Param    pipeline_id query string false "Secret project ID (exact)"
+// @Param    project_id  query string false "Secret pipeline ID (exact)"
 // @Success  200 {object} []model.Secret "List of secrets"
 // @Failure  400 {object} util.Message   "Error in request"
 // @Failure  404 {object} util.Message   "No records found"

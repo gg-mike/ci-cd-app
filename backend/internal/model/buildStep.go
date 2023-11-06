@@ -23,7 +23,7 @@ type BuildStepShort struct {
 }
 
 type BuildLog struct {
-	Command     string    `json:"command"         gorm:"primaryKey"`
+	Command     string    `json:"command"         gorm:"primaryKey"` // TODO: error: command can be bigger than limit for pk
 	Idx         int       `json:"idx,omitempty"`
 	Total       int       `json:"total,omitempty"`
 	Output      string    `json:"output"          gorm:"not null"`

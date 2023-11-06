@@ -11,8 +11,12 @@ func InitVariableDAO() dao.DAO[model.Variable, model.Variable] {
 		filters := map[string]any{}
 		for key := range ctx.Request.URL.Query() {
 			switch key {
-			case "name":
-				filters["name LIKE ?"] = "%" + ctx.Query(key) + "%"
+			case "key":
+				filters["key LIKE ?"] = "%" + ctx.Query(key) + "%"
+			case "project_id":
+				filters["project_id = ?"] = ctx.Query(key)
+			case "pipeline_id":
+				filters["pipeline_id = ?"] = ctx.Query(key)
 			}
 		}
 

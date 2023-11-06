@@ -11,18 +11,20 @@ import (
 )
 
 type Secret struct {
-	ID         uuid.UUID  `json:"id"          gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	Key        string     `json:"key"         gorm:"not null"`
-	ProjectID  *uuid.UUID `json:"project_id"  gorm:"type:uuid"`
-	PipelineID *uuid.UUID `json:"pipeline_id" gorm:"type:uuid"`
-	Unique     string     `json:"-"           gorm:"->;type: text GENERATED ALWAYS AS (key || '/' || COALESCE(project_id::text,'') || '/' || COALESCE(pipeline_id::text,'')) STORED;uniqueIndex:idx_secrets;default:(-)"`
-	CreatedAt  time.Time  `json:"created_at"  gorm:"default:now()"`
-	UpdatedAt  time.Time  `json:"updated_at"  gorm:"default:now()"`
+	ID         uuid.UUID  `json:"id"             gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+	Key        string     `json:"key"            gorm:"not null"`
+	Path       string     `json:"path,omitempty"`
+	ProjectID  *uuid.UUID `json:"project_id"     gorm:"type:uuid"`
+	PipelineID *uuid.UUID `json:"pipeline_id"    gorm:"type:uuid"`
+	Unique     string     `json:"-"              gorm:"->;type: text GENERATED ALWAYS AS (key || '/' || COALESCE(project_id::text,'') || '/' || COALESCE(pipeline_id::text,'')) STORED;uniqueIndex:idx_secrets;default:(-)"`
+	CreatedAt  time.Time  `json:"created_at"     gorm:"default:now()"`
+	UpdatedAt  time.Time  `json:"updated_at"     gorm:"default:now()"`
 }
 
 type SecretInput struct {
 	Key        string     `json:"key"`
 	Value      string     `json:"value"`
+	Path       string     `json:"path"`
 	ProjectID  *uuid.UUID `json:"project_id"`
 	PipelineID *uuid.UUID `json:"pipeline_id"`
 }

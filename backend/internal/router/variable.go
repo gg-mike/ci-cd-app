@@ -12,10 +12,12 @@ import (
 // @Tags     variables
 // @Accept   json
 // @Produce  json
-// @Param    page  query int    false "Page number"
-// @Param    size  query int    false "Page size"
-// @Param    order query string false "Order by field"
-// @Param    name  query string false "Variable name (pattern)"
+// @Param    page        query int    false "Page number"
+// @Param    size        query int    false "Page size"
+// @Param    order       query string false "Order by field"
+// @Param    key         query string false "Variable name (pattern)"
+// @Param    pipeline_id query string false "Variable project ID (exact)"
+// @Param    project_id  query string false "Variable pipeline ID (exact)"
 // @Success  200 {object} []model.Variable "List of variables"
 // @Failure  400 {object} util.Message     "Error in request"
 // @Failure  404 {object} util.Message     "No records found"

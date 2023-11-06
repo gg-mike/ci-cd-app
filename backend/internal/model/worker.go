@@ -120,7 +120,6 @@ func (m *Worker) BeforeDelete(tx *gorm.DB) error {
 			return errors.New("cannot delete worker with running builds")
 		}
 	}
-	tx.Model(&m).UpdateColumn("deleted", true)
 	return nil
 }
 

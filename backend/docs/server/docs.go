@@ -920,8 +920,20 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Secret name (pattern)",
-                        "name": "name",
+                        "description": "Secret key (pattern)",
+                        "name": "key",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Secret project ID (exact)",
+                        "name": "pipeline_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Secret pipeline ID (exact)",
+                        "name": "project_id",
                         "in": "query"
                     }
                 ],
@@ -1378,7 +1390,19 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Variable name (pattern)",
-                        "name": "name",
+                        "name": "key",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Variable project ID (exact)",
+                        "name": "pipeline_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Variable pipeline ID (exact)",
+                        "name": "project_id",
                         "in": "query"
                     }
                 ],
@@ -2042,6 +2066,12 @@ const docTemplate = `{
         "model.PipelineConfig": {
             "type": "object",
             "properties": {
+                "cleanup": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "image": {
                     "type": "string"
                 },
@@ -2191,6 +2221,9 @@ const docTemplate = `{
                 "key": {
                     "type": "string"
                 },
+                "path": {
+                    "type": "string"
+                },
                 "pipeline_id": {
                     "type": "string"
                 },
@@ -2206,6 +2239,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "key": {
+                    "type": "string"
+                },
+                "path": {
                     "type": "string"
                 },
                 "pipeline_id": {
@@ -2256,6 +2292,9 @@ const docTemplate = `{
                 "key": {
                     "type": "string"
                 },
+                "path": {
+                    "type": "string"
+                },
                 "pipeline_id": {
                     "type": "string"
                 },
@@ -2274,6 +2313,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "key": {
+                    "type": "string"
+                },
+                "path": {
                     "type": "string"
                 },
                 "pipeline_id": {
@@ -2414,11 +2456,7 @@ const docTemplate = `{
                 1000000,
                 1000000000,
                 60000000000,
-                3600000000000,
-                1,
-                1000,
-                1000000,
-                1000000000
+                3600000000000
             ],
             "x-enum-varnames": [
                 "minDuration",
@@ -2428,11 +2466,7 @@ const docTemplate = `{
                 "Millisecond",
                 "Second",
                 "Minute",
-                "Hour",
-                "Nanosecond",
-                "Microsecond",
-                "Millisecond",
-                "Second"
+                "Hour"
             ]
         },
         "util.Message": {

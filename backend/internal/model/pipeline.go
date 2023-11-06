@@ -40,9 +40,10 @@ type PipelineShort struct {
 }
 
 type PipelineConfig struct {
-	System string               `json:"system"`
-	Image  string               `json:"image"`
-	Steps  []PipelineConfigStep `json:"steps"`
+	System  string               `json:"system"`
+	Image   string               `json:"image"`
+	Steps   []PipelineConfigStep `json:"steps"`
+	Cleanup []string             `json:"cleanup"`
 }
 
 type PipelineConfigStep struct {
@@ -63,7 +64,6 @@ func (m *Pipeline) AfterUpdate(tx *gorm.DB) error {
 func (m *Pipeline) BeforeDelete(tx *gorm.DB) error {
 	if !IsForce(tx) {
 		if len(m.Builds) == 0 {
-			tx.Model(&m).UpdateColumn("deleted", true)
 			return nil
 		}
 		return errors.New("cannot delete project with builds (use 'force' query param to overwrite)")
@@ -74,6 +74,5 @@ func (m *Pipeline) BeforeDelete(tx *gorm.DB) error {
 			return errors.New("cannot delete pipeline with running builds")
 		}
 	}
-	tx.Model(&m).UpdateColumn("deleted", true)
 	return nil
 }
