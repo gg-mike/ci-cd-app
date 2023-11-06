@@ -1,4 +1,4 @@
-package engine
+package build
 
 import (
 	"errors"
@@ -7,9 +7,10 @@ import (
 	"github.com/gg-mike/ci-cd-app/backend/internal/model"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
-type BuildContext struct {
+type Context struct {
 	Build           model.Build
 	Pipeline        model.Pipeline
 	Project         model.Project
@@ -26,26 +27,26 @@ var (
 	ErrInvalidVariables = errors.New("invalid variables")
 )
 
-func Init(buildID uuid.UUID) (BuildContext, error) {
+func Init(buildID uuid.UUID) (Context, error) {
 	var err error
-	ctx := BuildContext{}
+	ctx := Context{}
 
 	// BUILD INIT
 	if err = db.Get().First(&ctx.Build, "id = ?", buildID).Error; err != nil {
-		return BuildContext{}, ErrInvalidBuild
+		return Context{}, ErrInvalidBuild
 	}
 	ctx.Build.Steps = []model.BuildStep{{Name: "Build context creation", BuildID: buildID, Logs: []model.BuildLog{}, Number: 0}}
 	AppendLog(&ctx, 0, "BUILD INIT", "success")
 
 	// PIPELINE INIT
-	if err = db.Get().First(&ctx.Pipeline, "id = ?", ctx.Build.PipelineID).Error; err != nil {
+	if err = db.Get().Preload(clause.Associations).First(&ctx.Pipeline, "id = ?", ctx.Build.PipelineID).Error; err != nil {
 		AppendLog(&ctx, 0, "PIPELINE INIT", "db: "+err.Error())
 		return ctx, ErrInvalidPipeline
 	}
 	AppendLog(&ctx, 0, "PIPELINE INIT", "success")
 
 	// PROJECT INIT
-	if err = db.Get().First(&ctx.Project, "id = ?", ctx.Pipeline.ProjectID).Error; err != nil {
+	if err = db.Get().Preload(clause.Associations).First(&ctx.Project, "id = ?", ctx.Pipeline.ProjectID).Error; err != nil {
 		AppendLog(&ctx, 0, "PROJECT INIT", "db: "+err.Error())
 		return ctx, ErrInvalidProject
 	}

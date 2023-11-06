@@ -5,7 +5,8 @@ import (
 	"time"
 
 	"github.com/gg-mike/ci-cd-app/backend/internal/db"
-	"github.com/gg-mike/ci-cd-app/backend/internal/engine"
+	"github.com/gg-mike/ci-cd-app/backend/internal/engine/executor"
+	"github.com/gg-mike/ci-cd-app/backend/internal/engine/executor/build"
 	"github.com/gg-mike/ci-cd-app/backend/internal/logger"
 	"github.com/gg-mike/ci-cd-app/backend/internal/model"
 	"github.com/google/uuid"
@@ -39,7 +40,7 @@ func (ctx Context) Schedule(buildID uuid.UUID) {
 	}
 
 	log(zerolog.DebugLevel, id, "execute").Msg("build execution started")
-	if err := engine.Execute(&buildCtx); err != nil {
+	if err := executor.Execute(&buildCtx); err != nil {
 		log(zerolog.WarnLevel, id, "execute").Err(err).Msg("build execution ended with error")
 		if err := db.Get().Model(&buildCtx.Build).UpdateColumn("status", model.BuildFailed).Error; err != nil {
 			log(zerolog.ErrorLevel, id, "execute").Err(err).Msg("could not update build")
@@ -72,11 +73,11 @@ func log(level zerolog.Level, buildID uuid.UUID, step string) *zerolog.Event {
 	return logger.Basic(level, module).Str("build_id", buildID.String()).Str("step", step)
 }
 
-func buildContext(buildID uuid.UUID) (engine.BuildContext, error) {
+func buildContext(buildID uuid.UUID) (build.Context, error) {
 	start := time.Now()
 	log(zerolog.DebugLevel, buildID, "context-create").Msg("build context creation started")
 
-	buildCtx, err := engine.Init(buildID)
+	buildCtx, err := build.Init(buildID)
 	id := buildCtx.Build.ID
 
 	if err == nil {
@@ -90,7 +91,7 @@ func buildContext(buildID uuid.UUID) (engine.BuildContext, error) {
 		return buildCtx, nil
 	}
 
-	if err == engine.ErrInvalidBuild {
+	if err == build.ErrInvalidBuild {
 		log(zerolog.FatalLevel, id, "context-create").Err(err).Msg("fatal error during build context creation")
 	}
 
@@ -105,7 +106,7 @@ func buildContext(buildID uuid.UUID) (engine.BuildContext, error) {
 	return buildCtx, ErrBuildInitFailed
 }
 
-func bindWorker(buildCtx *engine.BuildContext) error {
+func bindWorker(buildCtx *build.Context) error {
 	id := buildCtx.Build.ID
 	log(zerolog.DebugLevel, id, "worker-bind").Msg("worker binding started")
 	start := time.Now()
@@ -114,9 +115,9 @@ func bindWorker(buildCtx *engine.BuildContext) error {
 	// TODO: scheduler logic (adjusting for system & image req, balancing load, etc.) and handle cancel
 	if err := db.Get().First(&buildCtx.Worker).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			engine.AppendLog(buildCtx, 1, "BIND", "no worker available")
+			build.AppendLog(buildCtx, 1, "BIND", "no worker available")
 		} else {
-			engine.AppendLog(buildCtx, 1, "BIND", "db: "+err.Error())
+			build.AppendLog(buildCtx, 1, "BIND", "db: "+err.Error())
 		}
 		buildCtx.Build.Steps[1].Duration = time.Since(start)
 		buildCtx.Build.Status = model.BuildFailed
@@ -127,7 +128,7 @@ func bindWorker(buildCtx *engine.BuildContext) error {
 		}
 		return ErrBuildInitFailed
 	}
-	engine.AppendLog(buildCtx, 1, "BIND", "worker ["+buildCtx.Worker.Name+"] bound")
+	build.AppendLog(buildCtx, 1, "BIND", "worker ["+buildCtx.Worker.Name+"] bound")
 	logger.Basic(zerolog.DebugLevel, "scheduler").Msgf("worker: %+v", buildCtx.Worker)
 	buildCtx.Build.Steps[1].Duration = time.Since(start)
 	log(zerolog.DebugLevel, id, "worker-bind").Msg("worker binding succeeded")
