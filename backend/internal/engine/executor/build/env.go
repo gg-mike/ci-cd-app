@@ -101,7 +101,7 @@ func prepareStepCommands(system string, env map[string]envInstance, prefix strin
 	// TODO: support for over OS
 	if system == "Linux" {
 		templateEnv = "export %s%s=\"%s\""
-		templateFile = "export %s%s=\"%s\" && echo \"%s\" > %s"
+		templateFile = "export %s%s=\"%s\" && echo '%s' > %s"
 		templateFileDelete = "rm -f %s"
 	}
 	commands := []string{}
