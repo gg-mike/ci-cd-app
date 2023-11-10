@@ -6,12 +6,11 @@ import (
 	"github.com/gg-mike/ci-cd-app/backend/internal/logger"
 	"github.com/gg-mike/ci-cd-app/backend/internal/sys"
 	"github.com/joho/godotenv"
-	"github.com/rs/zerolog"
 )
 
 func main() {
 	if err := godotenv.Load(); err != nil {
-		logger.Basic(zerolog.WarnLevel, "main").Msgf("Missing .env file")
+		logger.Warn("main").Msgf("Missing .env file")
 	}
 
 	logDir := sys.GetEnvWithFallback("LOGS", "./logs")
@@ -19,10 +18,10 @@ func main() {
 
 	dbUrl, err := sys.GetRequiredEnv("DB_URL")
 	if err != nil {
-		logger.Basic(zerolog.FatalLevel, "main").Msgf("Missing DB_URL variable")
+		logger.Fatal("main").Msgf("Missing DB_URL variable")
 	}
 
 	if err = db.Init(dbUrl, true); err != nil {
-		logger.Basic(zerolog.FatalLevel, "main").Msgf("Error while migrating database: %v", err)
+		logger.Fatal("main").Msgf("Error while migrating database: %v", err)
 	}
 }

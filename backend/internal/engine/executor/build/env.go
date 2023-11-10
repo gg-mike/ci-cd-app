@@ -10,7 +10,6 @@ import (
 	"github.com/gg-mike/ci-cd-app/backend/internal/logger"
 	"github.com/gg-mike/ci-cd-app/backend/internal/model"
 	"github.com/gg-mike/ci-cd-app/backend/internal/vault"
-	"github.com/rs/zerolog"
 )
 
 type envInstance struct {
@@ -21,7 +20,7 @@ type envInstance struct {
 func (ctx *Context) CreateEnvSteps() error {
 	workdirSteps, workdirCleanup := ctx.createWorkdirStep()
 	secretsSteps, secretsCleanup, err := ctx.createSecretsStep()
-	logger.Basic(zerolog.DebugLevel, "build").Msgf("%+v", secretsSteps)
+	logger.Debug("build").Msgf("%+v", secretsSteps)
 	if err != nil {
 		return err
 	}

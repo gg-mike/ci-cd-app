@@ -12,7 +12,6 @@ import (
 	"github.com/gg-mike/ci-cd-app/backend/internal/engine/executor/build"
 	"github.com/gg-mike/ci-cd-app/backend/internal/logger"
 	"github.com/gg-mike/ci-cd-app/backend/internal/model"
-	"github.com/rs/zerolog"
 )
 
 func Execute(buildCtx *build.Context) error {
@@ -46,11 +45,11 @@ func Execute(buildCtx *build.Context) error {
 	}
 
 	if errCleanup := ctx.runCleanup(buildCtx, x); errCleanup != nil {
-		logger.Basic(zerolog.DebugLevel, "executor").Err(errCleanup).Msg("err in cleanup")
+		logger.Debug("executor").Err(errCleanup).Msg("err in cleanup")
 		return err
 	}
 
-	logger.Basic(zerolog.DebugLevel, "executor").Err(err).Msg("end")
+	logger.Debug("executor").Err(err).Msg("end")
 
 	return err
 }
@@ -60,7 +59,7 @@ func (ctx *Context) runStep(buildCtx *build.Context, step model.PipelineConfigSt
 	if err := db.Get().First(&buildCtx.Build).Error; err != nil {
 		return err
 	}
-	logger.Basic(zerolog.DebugLevel, "executor").Msgf("build status: %s", buildCtx.Build.Status)
+	logger.Debug("executor").Msgf("build status: %s", buildCtx.Build.Status)
 	if buildCtx.Build.Status == model.BuildCanceled {
 		return nil
 	}
