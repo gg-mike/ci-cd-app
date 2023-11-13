@@ -1,6 +1,7 @@
 package sys
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -36,10 +37,10 @@ func TestGetRequiredEnv(t *testing.T) {
 		args    string
 		isEnv   bool
 		want    string
-		wantErr bool
+		wantErr string
 	}{
-		{"Env present", "FOO", true, "foo", false},
-		{"Env absent", "FOO", false, "", true},
+		{"Env present", "FOO", true, "foo", "<nil>"},
+		{"Env absent", "FOO", false, "", `env variable "FOO" is missing`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -47,7 +48,7 @@ func TestGetRequiredEnv(t *testing.T) {
 				t.Setenv(tt.args, tt.want)
 			}
 			got, err := GetRequiredEnv(tt.args)
-			if (err != nil) != tt.wantErr {
+			if fmt.Sprint(err) != tt.wantErr {
 				t.Errorf("error\nactual: %v\nexpect: %v", err, tt.wantErr)
 				return
 			}
