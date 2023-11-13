@@ -3,7 +3,6 @@ package router
 import (
 	"github.com/gg-mike/ci-cd-app/backend/internal/controller"
 	"github.com/gg-mike/ci-cd-app/backend/internal/controller/dao"
-	"github.com/gg-mike/ci-cd-app/backend/internal/model"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,11 +17,11 @@ import (
 // @Param    name  query string false "Project name (pattern)"
 // @Param    repo  query string false "Project repo (pattern)"
 // @Success  200 {object} []model.ProjectShort "List of projects"
-// @Failure  400 {object} util.Message         "Error in request"
-// @Failure  404 {object} util.Message         "No records found"
-// @Failure  500 {object} util.Message         "Database error"
+// @Failure  400 {object} dao.Message          "Error in request"
+// @Failure  404 {object} dao.Message          "No records found"
+// @Failure  500 {object} dao.Message          "Database error"
 // @Router   /projects [get]
-func allProjects(dao dao.DAO[model.Project, model.ProjectShort]) gin.HandlerFunc { return dao.GetMany }
+func allProjects(dao dao.IDAO) gin.HandlerFunc { return dao.GetMany }
 
 // @Summary  Create new project
 // @ID       create-project
@@ -31,10 +30,10 @@ func allProjects(dao dao.DAO[model.Project, model.ProjectShort]) gin.HandlerFunc
 // @Produce  json
 // @Param    project body model.ProjectInput true "New project entry"
 // @Success  200 {object} model.Project "Newly created project"
-// @Failure  400 {object} util.Message  "Error in params"
-// @Failure  501 {object} util.Message  "Endpoint not implemented"
+// @Failure  400 {object} dao.Message   "Error in params"
+// @Failure  501 {object} dao.Message   "Endpoint not implemented"
 // @Router   /projects [post]
-func createProject(dao dao.DAO[model.Project, model.ProjectShort]) gin.HandlerFunc { return dao.Create }
+func createProject(dao dao.IDAO) gin.HandlerFunc { return dao.Create }
 
 // @Summary  Get the single project
 // @ID       single-project
@@ -42,11 +41,11 @@ func createProject(dao dao.DAO[model.Project, model.ProjectShort]) gin.HandlerFu
 // @Produce  json
 // @Param    id path string true "Project ID"
 // @Success  201 {object} model.Project "Requested project"
-// @Failure  400 {object} util.Message  "Error in params"
-// @Failure  404 {object} util.Message  "No record found"
-// @Failure  500 {object} util.Message  "Database error"
+// @Failure  400 {object} dao.Message   "Error in params"
+// @Failure  404 {object} dao.Message   "No record found"
+// @Failure  500 {object} dao.Message   "Database error"
 // @Router   /projects/{id} [get]
-func getProject(dao dao.DAO[model.Project, model.ProjectShort]) gin.HandlerFunc { return dao.GetOne }
+func getProject(dao dao.IDAO) gin.HandlerFunc { return dao.GetOne }
 
 // @Summary  Update project
 // @ID       update-project
@@ -56,10 +55,10 @@ func getProject(dao dao.DAO[model.Project, model.ProjectShort]) gin.HandlerFunc 
 // @Param    id      path string             true "Project ID"
 // @Param    project body model.ProjectInput true "Updated project entry"
 // @Success  200 {object} model.Project "Updated project"
-// @Failure  400 {object} util.Message  "Error in params"
-// @Failure  501 {object} util.Message  "Endpoint not implemented"
+// @Failure  400 {object} dao.Message   "Error in params"
+// @Failure  501 {object} dao.Message   "Endpoint not implemented"
 // @Router   /projects/{id} [put]
-func updateProject(dao dao.DAO[model.Project, model.ProjectShort]) gin.HandlerFunc { return dao.Update }
+func updateProject(dao dao.IDAO) gin.HandlerFunc { return dao.Update }
 
 // @Summary  Delete project
 // @ID       delete-project
@@ -67,11 +66,11 @@ func updateProject(dao dao.DAO[model.Project, model.ProjectShort]) gin.HandlerFu
 // @Produce  json
 // @Param    id    path  string  true  "Project ID"
 // @Param    force query boolean false "Force deletion"
-// @Success  200 {object} util.Message "Delete message"
-// @Failure  400 {object} util.Message "Error in params"
-// @Failure  501 {object} util.Message "Endpoint not implemented"
+// @Success  200 {object} dao.Message  "Delete message"
+// @Failure  400 {object} dao.Message  "Error in params"
+// @Failure  501 {object} dao.Message  "Endpoint not implemented"
 // @Router   /projects/{id} [delete]
-func deleteProject(dao dao.DAO[model.Project, model.ProjectShort]) gin.HandlerFunc { return dao.Delete }
+func deleteProject(dao dao.IDAO) gin.HandlerFunc { return dao.Delete }
 
 func InitProjectGroup(rg *gin.RouterGroup) {
 	dao := controller.InitProjectDAO()

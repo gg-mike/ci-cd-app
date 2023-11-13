@@ -23,6 +23,7 @@
     "gonic",
     "gorm",
     "Healthz",
+    "IDAO",
     "Msgf",
     "Readyz",
     "workdir",

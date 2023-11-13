@@ -14,6 +14,7 @@ import (
 	"github.com/joho/godotenv"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"gorm.io/gorm"
 )
 
 func init() {
@@ -30,7 +31,7 @@ func init() {
 	if err != nil {
 		logger.Fatal("main").Msgf("Missing DB_URL variable")
 	}
-	if err = db.Init(dbUrl, false); err != nil {
+	if err = db.Init(dbUrl, gorm.Config{Logger: logger.Gorm()}, false); err != nil {
 		logger.Fatal("main").Msgf("Error while connecting to database: %v", err)
 	}
 

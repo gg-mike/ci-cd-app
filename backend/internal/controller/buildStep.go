@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitBuildStepDAO() dao.DAO[model.BuildStep, model.BuildStepShort] {
+func InitBuildStepDAO() dao.IDAO {
 	return dao.DAO[model.BuildStep, model.BuildStepShort]{
 		Filter: func(ctx *gin.Context) (map[string]any, error) { return map[string]any{}, nil },
 	}

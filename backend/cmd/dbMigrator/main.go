@@ -6,6 +6,7 @@ import (
 	"github.com/gg-mike/ci-cd-app/backend/internal/logger"
 	"github.com/gg-mike/ci-cd-app/backend/internal/sys"
 	"github.com/joho/godotenv"
+	"gorm.io/gorm"
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 		logger.Fatal("main").Msgf("Missing DB_URL variable")
 	}
 
-	if err = db.Init(dbUrl, true); err != nil {
+	if err = db.Init(dbUrl, gorm.Config{Logger: logger.Gorm()}, true); err != nil {
 		logger.Fatal("main").Msgf("Error while migrating database: %v", err)
 	}
 }

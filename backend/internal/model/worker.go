@@ -26,17 +26,26 @@ const (
 	WorkerUnreachable
 )
 
+type WorkerStrategy int
+
+const (
+	WorkerUseMin = iota
+	WorkerUseMax
+)
+
 type Worker struct {
-	ID        uuid.UUID    `json:"id"         gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	Name      string       `json:"name"       gorm:"uniqueIndex:idx_workers;not null"`
-	Address   string       `json:"address"    gorm:"not null"`
-	System    string       `json:"system"     gorm:"not null"`
-	Type      WorkerType   `json:"type"       gorm:"not null"`
-	Username  string       `json:"username"   gorm:"not null"`
-	Status    WorkerStatus `json:"status"     gorm:"not null;default:0"`
-	Builds    []Build      `json:"builds"     gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;not null"`
-	CreatedAt time.Time    `json:"created_at" gorm:"default:now()"`
-	UpdatedAt time.Time    `json:"updated_at" gorm:"default:now()"`
+	ID        uuid.UUID      `json:"id"         gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+	Name      string         `json:"name"       gorm:"uniqueIndex:idx_workers;not null"`
+	Address   string         `json:"address"    gorm:"not null"`
+	System    string         `json:"system"     gorm:"not null"`
+	Username  string         `json:"username"   gorm:"not null"`
+	Type      WorkerType     `json:"type"       gorm:"not null"`
+	Status    WorkerStatus   `json:"status"     gorm:"not null;default:0"`
+	Strategy  WorkerStrategy `json:"strategy"   gorm:"not null;default:0"`
+	Capacity  int            `json:"capacity" gorm:"not null"`
+	Builds    []Build        `json:"builds"     gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;not null"`
+	CreatedAt time.Time      `json:"created_at" gorm:"default:now()"`
+	UpdatedAt time.Time      `json:"updated_at" gorm:"default:now()"`
 }
 
 type WorkerInput struct {
@@ -49,15 +58,17 @@ type WorkerInput struct {
 }
 
 type WorkerShort struct {
-	ID        uuid.UUID    `json:"id"         gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	Name      string       `json:"name"       gorm:"uniqueIndex:idx_workers;not null"`
-	Address   string       `json:"address"    gorm:"not null"`
-	System    string       `json:"system"     gorm:"not null"`
-	Type      WorkerType   `json:"type"       gorm:"not null"`
-	Username  string       `json:"username"   gorm:"not null"`
-	Status    WorkerStatus `json:"status"     gorm:"not null;default:0"`
-	CreatedAt time.Time    `json:"created_at" gorm:"default:now()"`
-	UpdatedAt time.Time    `json:"updated_at" gorm:"default:now()"`
+	ID        uuid.UUID      `json:"id"         gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+	Name      string         `json:"name"       gorm:"uniqueIndex:idx_workers;not null"`
+	Address   string         `json:"address"    gorm:"not null"`
+	System    string         `json:"system"     gorm:"not null"`
+	Username  string         `json:"username"   gorm:"not null"`
+	Type      WorkerType     `json:"type"       gorm:"not null"`
+	Status    WorkerStatus   `json:"status"     gorm:"not null;default:0"`
+	Strategy  WorkerStrategy `json:"strategy"   gorm:"not null;default:0"`
+	Capacity  int            `json:"capacity" gorm:"not null"`
+	CreatedAt time.Time      `json:"created_at" gorm:"default:now()"`
+	UpdatedAt time.Time      `json:"updated_at" gorm:"default:now()"`
 }
 
 func (m *Worker) BeforeCreate(tx *gorm.DB) error {

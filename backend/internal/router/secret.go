@@ -3,7 +3,6 @@ package router
 import (
 	"github.com/gg-mike/ci-cd-app/backend/internal/controller"
 	"github.com/gg-mike/ci-cd-app/backend/internal/controller/dao"
-	"github.com/gg-mike/ci-cd-app/backend/internal/model"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,11 +18,11 @@ import (
 // @Param    pipeline_id query string false "Secret project ID (exact)"
 // @Param    project_id  query string false "Secret pipeline ID (exact)"
 // @Success  200 {object} []model.Secret "List of secrets"
-// @Failure  400 {object} util.Message   "Error in request"
-// @Failure  404 {object} util.Message   "No records found"
-// @Failure  500 {object} util.Message   "Database error"
+// @Failure  400 {object} dao.Message    "Error in request"
+// @Failure  404 {object} dao.Message    "No records found"
+// @Failure  500 {object} dao.Message    "Database error"
 // @Router   /secrets [get]
-func allSecrets(dao dao.DAO[model.Secret, model.Secret]) gin.HandlerFunc { return dao.GetMany }
+func allSecrets(dao dao.IDAO) gin.HandlerFunc { return dao.GetMany }
 
 // @Summary  Create new secret
 // @ID       create-secret
@@ -32,10 +31,10 @@ func allSecrets(dao dao.DAO[model.Secret, model.Secret]) gin.HandlerFunc { retur
 // @Produce  json
 // @Param    secret body model.SecretInput true "New secret entry"
 // @Success  201 {object} model.Secret "Newly created secret"
-// @Failure  400 {object} util.Message "Error in params"
-// @Failure  501 {object} util.Message "Endpoint not implemented"
+// @Failure  400 {object} dao.Message  "Error in params"
+// @Failure  501 {object} dao.Message  "Endpoint not implemented"
 // @Router   /secrets [post]
-func createSecret(dao dao.DAO[model.Secret, model.Secret]) gin.HandlerFunc { return dao.Create }
+func createSecret(dao dao.IDAO) gin.HandlerFunc { return dao.Create }
 
 // @Summary  Update secret
 // @ID       update-secret
@@ -45,21 +44,21 @@ func createSecret(dao dao.DAO[model.Secret, model.Secret]) gin.HandlerFunc { ret
 // @Param    id     path string            true "Secret ID"
 // @Param    secret body model.SecretInput true "Updated secret entry"
 // @Success  200 {object} model.Secret "Updated secret"
-// @Failure  400 {object} util.Message "Error in params"
-// @Failure  501 {object} util.Message "Endpoint not implemented"
+// @Failure  400 {object} dao.Message  "Error in params"
+// @Failure  501 {object} dao.Message  "Endpoint not implemented"
 // @Router   /secrets/{id} [put]
-func updateSecret(dao dao.DAO[model.Secret, model.Secret]) gin.HandlerFunc { return dao.Update }
+func updateSecret(dao dao.IDAO) gin.HandlerFunc { return dao.Update }
 
 // @Summary  Delete secret
 // @ID       delete-secret
 // @Tags     secrets
 // @Produce  json
 // @Param    id path string true "Secret ID"
-// @Success  200 {object} util.Message "Delete message"
-// @Failure  400 {object} util.Message "Error in params"
-// @Failure  501 {object} util.Message "Endpoint not implemented"
+// @Success  200 {object} dao.Message "Delete message"
+// @Failure  400 {object} dao.Message "Error in params"
+// @Failure  501 {object} dao.Message "Endpoint not implemented"
 // @Router   /secrets/{id} [delete]
-func deleteSecret(dao dao.DAO[model.Secret, model.Secret]) gin.HandlerFunc { return dao.Delete }
+func deleteSecret(dao dao.IDAO) gin.HandlerFunc { return dao.Delete }
 
 func InitSecretGroup(rg *gin.RouterGroup) {
 	dao := controller.InitSecretDAO()

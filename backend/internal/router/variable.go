@@ -3,7 +3,6 @@ package router
 import (
 	"github.com/gg-mike/ci-cd-app/backend/internal/controller"
 	"github.com/gg-mike/ci-cd-app/backend/internal/controller/dao"
-	"github.com/gg-mike/ci-cd-app/backend/internal/model"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,11 +18,11 @@ import (
 // @Param    pipeline_id query string false "Variable project ID (exact)"
 // @Param    project_id  query string false "Variable pipeline ID (exact)"
 // @Success  200 {object} []model.Variable "List of variables"
-// @Failure  400 {object} util.Message     "Error in request"
-// @Failure  404 {object} util.Message     "No records found"
-// @Failure  500 {object} util.Message     "Database error"
+// @Failure  400 {object} dao.Message      "Error in request"
+// @Failure  404 {object} dao.Message      "No records found"
+// @Failure  500 {object} dao.Message      "Database error"
 // @Router   /variables [get]
-func allVariables(dao dao.DAO[model.Variable, model.Variable]) gin.HandlerFunc {
+func allVariables(dao dao.IDAO) gin.HandlerFunc {
 	return dao.GetMany
 }
 
@@ -34,10 +33,10 @@ func allVariables(dao dao.DAO[model.Variable, model.Variable]) gin.HandlerFunc {
 // @Produce  json
 // @Param    variable body model.VariableInput true "New variable entry"
 // @Success  200 {object} model.Variable "Newly created variable"
-// @Failure  400 {object} util.Message   "Error in params"
-// @Failure  501 {object} util.Message   "Endpoint not implemented"
+// @Failure  400 {object} dao.Message    "Error in params"
+// @Failure  501 {object} dao.Message    "Endpoint not implemented"
 // @Router   /variables [post]
-func createVariable(dao dao.DAO[model.Variable, model.Variable]) gin.HandlerFunc {
+func createVariable(dao dao.IDAO) gin.HandlerFunc {
 	return dao.Create
 }
 
@@ -49,10 +48,10 @@ func createVariable(dao dao.DAO[model.Variable, model.Variable]) gin.HandlerFunc
 // @Param    id       path string              true "Variable ID"
 // @Param    variable body model.VariableInput true "Updated variable entry"
 // @Success  200 {object} model.Variable "Updated variable"
-// @Failure  400 {object} util.Message   "Error in params"
-// @Failure  501 {object} util.Message   "Endpoint not implemented"
+// @Failure  400 {object} dao.Message    "Error in params"
+// @Failure  501 {object} dao.Message    "Endpoint not implemented"
 // @Router   /variables/{id} [put]
-func updateVariable(dao dao.DAO[model.Variable, model.Variable]) gin.HandlerFunc {
+func updateVariable(dao dao.IDAO) gin.HandlerFunc {
 	return dao.Update
 }
 
@@ -61,11 +60,11 @@ func updateVariable(dao dao.DAO[model.Variable, model.Variable]) gin.HandlerFunc
 // @Tags     variables
 // @Produce  json
 // @Param    id path string true "Variable ID"
-// @Success  200 {object} util.Message "Delete message"
-// @Failure  400 {object} util.Message "Error in params"
-// @Failure  501 {object} util.Message "Endpoint not implemented"
+// @Success  200 {object} dao.Message "Delete message"
+// @Failure  400 {object} dao.Message "Error in params"
+// @Failure  501 {object} dao.Message "Endpoint not implemented"
 // @Router   /variables/{id} [delete]
-func deleteVariable(dao dao.DAO[model.Variable, model.Variable]) gin.HandlerFunc {
+func deleteVariable(dao dao.IDAO) gin.HandlerFunc {
 	return dao.Delete
 }
 

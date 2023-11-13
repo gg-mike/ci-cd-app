@@ -3,7 +3,6 @@ package router
 import (
 	"github.com/gg-mike/ci-cd-app/backend/internal/controller"
 	"github.com/gg-mike/ci-cd-app/backend/internal/controller/dao"
-	"github.com/gg-mike/ci-cd-app/backend/internal/model"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,11 +18,11 @@ import (
 // @Param    branch     query string false "Pipeline branch (pattern)"
 // @Param    project_id query string false "Pipeline project ID (exact)"
 // @Success  200 {object} []model.PipelineShort "List of pipelines"
-// @Failure  400 {object} util.Message          "Error in request"
-// @Failure  404 {object} util.Message          "No records found"
-// @Failure  500 {object} util.Message          "Database error"
+// @Failure  400 {object} dao.Message           "Error in request"
+// @Failure  404 {object} dao.Message           "No records found"
+// @Failure  500 {object} dao.Message           "Database error"
 // @Router   /pipelines [get]
-func allPipelines(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFunc {
+func allPipelines(dao dao.IDAO) gin.HandlerFunc {
 	return dao.GetMany
 }
 
@@ -34,10 +33,10 @@ func allPipelines(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerF
 // @Produce  json
 // @Param    pipeline body model.PipelineInput true "New pipeline entry"
 // @Success  201 {object} model.Pipeline "Newly created pipeline"
-// @Failure  400 {object} util.Message   "Error in params"
-// @Failure  501 {object} util.Message   "Endpoint not implemented"
+// @Failure  400 {object} dao.Message    "Error in params"
+// @Failure  501 {object} dao.Message    "Endpoint not implemented"
 // @Router   /pipelines [post]
-func createPipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFunc {
+func createPipeline(dao dao.IDAO) gin.HandlerFunc {
 	return dao.Create
 }
 
@@ -47,11 +46,11 @@ func createPipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.Handle
 // @Produce  json
 // @Param    id path string true "Pipeline ID"
 // @Success  200 {object} model.Pipeline "Requested pipeline"
-// @Failure  400 {object} util.Message   "Error in params"
-// @Failure  404 {object} util.Message   "No record found"
-// @Failure  500 {object} util.Message   "Database error"
+// @Failure  400 {object} dao.Message    "Error in params"
+// @Failure  404 {object} dao.Message    "No record found"
+// @Failure  500 {object} dao.Message    "Database error"
 // @Router   /pipelines/{id} [get]
-func getPipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFunc { return dao.GetOne }
+func getPipeline(dao dao.IDAO) gin.HandlerFunc { return dao.GetOne }
 
 // @Summary  Update pipeline
 // @ID       update-pipeline
@@ -61,10 +60,10 @@ func getPipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFu
 // @Param    id       path string               true "Pipeline ID"
 // @Param    pipeline body model.PipelineInput true "Updated pipeline entry"
 // @Success  200 {object} model.Pipeline "Updated pipeline"
-// @Failure  400 {object} util.Message   "Error in params"
-// @Failure  501 {object} util.Message   "Endpoint not implemented"
+// @Failure  400 {object} dao.Message    "Error in params"
+// @Failure  501 {object} dao.Message    "Endpoint not implemented"
 // @Router   /pipelines/{id} [put]
-func updatePipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFunc {
+func updatePipeline(dao dao.IDAO) gin.HandlerFunc {
 	return dao.Update
 }
 
@@ -74,11 +73,11 @@ func updatePipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.Handle
 // @Produce  json
 // @Param    id    path  string  true  "Pipeline ID"
 // @Param    force query boolean false "Force deletion"
-// @Success  200 {object} util.Message "Delete message"
-// @Failure  400 {object} util.Message "Error in params"
-// @Failure  501 {object} util.Message "Endpoint not implemented"
+// @Success  200 {object} dao.Message "Delete message"
+// @Failure  400 {object} dao.Message "Error in params"
+// @Failure  501 {object} dao.Message "Endpoint not implemented"
 // @Router   /pipelines/{id} [delete]
-func deletePipeline(dao dao.DAO[model.Pipeline, model.PipelineShort]) gin.HandlerFunc {
+func deletePipeline(dao dao.IDAO) gin.HandlerFunc {
 	return dao.Delete
 }
 

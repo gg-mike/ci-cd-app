@@ -1,7 +1,6 @@
 package db
 
 import (
-	"github.com/gg-mike/ci-cd-app/backend/internal/logger"
 	"github.com/gg-mike/ci-cd-app/backend/internal/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -9,9 +8,9 @@ import (
 
 var db *gorm.DB
 
-func Init(dbUrl string, migrate bool) error {
+func Init(dbUrl string, cfg gorm.Config, migrate bool) error {
 	var err error
-	db, err = gorm.Open(postgres.Open(dbUrl), &gorm.Config{Logger: logger.Gorm()})
+	db, err = gorm.Open(postgres.Open(dbUrl), &cfg)
 	if err != nil {
 		return err
 	}

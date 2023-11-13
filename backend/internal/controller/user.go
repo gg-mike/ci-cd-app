@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitUserDAO() dao.DAO[model.User, model.User] {
+func InitUserDAO() dao.IDAO {
 	filter := func(ctx *gin.Context) (map[string]any, error) {
 		filters := map[string]any{}
 		for key := range ctx.Request.URL.Query() {
