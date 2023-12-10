@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/gg-mike/ci-cd-app/backend/internal/scheduler"
 	"github.com/gg-mike/ci-cd-app/backend/internal/ssh"
 	"github.com/gg-mike/ci-cd-app/backend/internal/vault"
 	"github.com/google/uuid"
@@ -30,22 +31,24 @@ type WorkerStrategy int
 
 const (
 	WorkerUseMin = iota
+	WorkerBalanced
 	WorkerUseMax
 )
 
 type Worker struct {
-	ID        uuid.UUID      `json:"id"         gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	Name      string         `json:"name"       gorm:"uniqueIndex:idx_workers;not null"`
-	Address   string         `json:"address"    gorm:"not null"`
-	System    string         `json:"system"     gorm:"not null"`
-	Username  string         `json:"username"   gorm:"not null"`
-	Type      WorkerType     `json:"type"       gorm:"not null"`
-	Status    WorkerStatus   `json:"status"     gorm:"not null;default:0"`
-	Strategy  WorkerStrategy `json:"strategy"   gorm:"not null;default:0"`
-	Capacity  int            `json:"capacity" gorm:"not null"`
-	Builds    []Build        `json:"builds"     gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;not null"`
-	CreatedAt time.Time      `json:"created_at" gorm:"default:now()"`
-	UpdatedAt time.Time      `json:"updated_at" gorm:"default:now()"`
+	ID           uuid.UUID      `json:"id"            gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+	Name         string         `json:"name"          gorm:"uniqueIndex:idx_workers;not null"`
+	Address      string         `json:"address"       gorm:"not null"`
+	System       string         `json:"system"        gorm:"not null"`
+	Username     string         `json:"username"      gorm:"not null"`
+	Type         WorkerType     `json:"type"          gorm:"not null"`
+	Status       WorkerStatus   `json:"status"        gorm:"not null;default:0"`
+	Strategy     WorkerStrategy `json:"strategy"      gorm:"not null;default:0"`
+	ActiveBuilds int            `json:"active_builds" gorm:"not null;default:0"`
+	Capacity     int            `json:"capacity"      gorm:"not null;default:0"`
+	Builds       []Build        `json:"builds"        gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;not null"`
+	CreatedAt    time.Time      `json:"created_at"    gorm:"default:now()"`
+	UpdatedAt    time.Time      `json:"updated_at"    gorm:"default:now()"`
 }
 
 type WorkerInput struct {
@@ -55,20 +58,22 @@ type WorkerInput struct {
 	Type       WorkerType `json:"type"`
 	Username   string     `json:"username"`
 	PrivateKey string     `json:"private_key"`
+	Capacity   int        `json:"capacity"`
 }
 
 type WorkerShort struct {
-	ID        uuid.UUID      `json:"id"         gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	Name      string         `json:"name"       gorm:"uniqueIndex:idx_workers;not null"`
-	Address   string         `json:"address"    gorm:"not null"`
-	System    string         `json:"system"     gorm:"not null"`
-	Username  string         `json:"username"   gorm:"not null"`
-	Type      WorkerType     `json:"type"       gorm:"not null"`
-	Status    WorkerStatus   `json:"status"     gorm:"not null;default:0"`
-	Strategy  WorkerStrategy `json:"strategy"   gorm:"not null;default:0"`
-	Capacity  int            `json:"capacity" gorm:"not null"`
-	CreatedAt time.Time      `json:"created_at" gorm:"default:now()"`
-	UpdatedAt time.Time      `json:"updated_at" gorm:"default:now()"`
+	ID           uuid.UUID      `json:"id"`
+	Name         string         `json:"name"`
+	Address      string         `json:"address"`
+	System       string         `json:"system"`
+	Username     string         `json:"username"`
+	Type         WorkerType     `json:"type"`
+	Status       WorkerStatus   `json:"status"`
+	Strategy     WorkerStrategy `json:"strategy"`
+	ActiveBuilds int            `json:"active_builds"`
+	Capacity     int            `json:"capacity"`
+	CreatedAt    time.Time      `json:"created_at"`
+	UpdatedAt    time.Time      `json:"updated_at"`
 }
 
 func (m *Worker) BeforeCreate(tx *gorm.DB) error {
@@ -85,6 +90,11 @@ func (m *Worker) BeforeCreate(tx *gorm.DB) error {
 func (m *Worker) AfterCreate(tx *gorm.DB) error {
 	privateKey, _ := GetFromRaw[string](tx, "private_key")
 	return vault.SetStr(m.ID.String(), privateKey)
+}
+
+func (m *Worker) AfterSave(tx *gorm.DB) error {
+	go scheduler.Get().ChangeInWorkers()
+	return nil
 }
 
 func (m *Worker) BeforeUpdate(tx *gorm.DB) error {

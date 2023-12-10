@@ -1,5 +1,29 @@
 basePath: /api
 definitions:
+  build.Context:
+    properties:
+      build:
+        $ref: '#/definitions/model.Build'
+      globalSecrets:
+        items:
+          $ref: '#/definitions/model.Secret'
+        type: array
+      globalVariables:
+        items:
+          $ref: '#/definitions/model.Variable'
+        type: array
+      pipeline:
+        $ref: '#/definitions/model.Pipeline'
+      project:
+        $ref: '#/definitions/model.Project'
+      worker:
+        $ref: '#/definitions/model.Worker'
+    type: object
+  dao.Message:
+    properties:
+      message:
+        type: string
+    type: object
   model.Build:
     properties:
       created_at:
@@ -35,6 +59,7 @@ definitions:
       build_step_id:
         type: string
       command:
+        description: 'TODO: error: command can be bigger than limit for pk'
         type: string
       idx:
         type: integer
@@ -316,12 +341,16 @@ definitions:
     type: object
   model.Worker:
     properties:
+      active_builds:
+        type: integer
       address:
         type: string
       builds:
         items:
           $ref: '#/definitions/model.Build'
         type: array
+      capacity:
+        type: integer
       created_at:
         type: string
       id:
@@ -330,6 +359,8 @@ definitions:
         type: string
       status:
         $ref: '#/definitions/model.WorkerStatus'
+      strategy:
+        type: integer
       system:
         type: string
       type:
@@ -343,6 +374,8 @@ definitions:
     properties:
       address:
         type: string
+      capacity:
+        type: integer
       name:
         type: string
       private_key:
@@ -356,8 +389,12 @@ definitions:
     type: object
   model.WorkerShort:
     properties:
+      active_builds:
+        type: integer
       address:
         type: string
+      capacity:
+        type: integer
       created_at:
         type: string
       id:
@@ -366,6 +403,8 @@ definitions:
         type: string
       status:
         $ref: '#/definitions/model.WorkerStatus'
+      strategy:
+        type: integer
       system:
         type: string
       type:
@@ -393,8 +432,25 @@ definitions:
     x-enum-varnames:
     - WorkerStatic
     - WorkerDockerHost
+  queue.QueueElem:
+    properties:
+      context:
+        $ref: '#/definitions/build.Context'
+      created_at:
+        type: string
+      id:
+        type: string
+    type: object
   time.Duration:
     enum:
+    - -9223372036854775808
+    - 9223372036854775807
+    - 1
+    - 1000
+    - 1000000
+    - 1000000000
+    - 60000000000
+    - 3600000000000
     - -9223372036854775808
     - 9223372036854775807
     - 1
@@ -413,11 +469,14 @@ definitions:
     - Second
     - Minute
     - Hour
-  util.Message:
-    properties:
-      message:
-        type: string
-    type: object
+    - minDuration
+    - maxDuration
+    - Nanosecond
+    - Microsecond
+    - Millisecond
+    - Second
+    - Minute
+    - Hour
   uuid.NullUUID:
     properties:
       uuid:
@@ -462,15 +521,15 @@ paths:
         "400":
           description: Error in request
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "404":
           description: No records found
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "500":
           description: Database error
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Get all build steps
       tags:
       - build steps
@@ -493,15 +552,15 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "404":
           description: No record found
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "500":
           description: Database error
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Get the single build step
       tags:
       - build steps
@@ -550,15 +609,15 @@ paths:
         "400":
           description: Error in request
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "404":
           description: No records found
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "500":
           description: Database error
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Get all builds
       tags:
       - builds
@@ -583,11 +642,11 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Create new build
       tags:
       - builds
@@ -610,15 +669,15 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "404":
           description: No record found
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "500":
           description: Database error
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Get the single build
       tags:
       - builds
@@ -648,11 +707,11 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Update build
       tags:
       - builds
@@ -698,15 +757,15 @@ paths:
         "400":
           description: Error in request
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "404":
           description: No records found
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "500":
           description: Database error
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Get all pipelines
       tags:
       - pipelines
@@ -731,11 +790,11 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Create new pipeline
       tags:
       - pipelines
@@ -758,15 +817,15 @@ paths:
         "200":
           description: Delete message
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Delete pipeline
       tags:
       - pipelines
@@ -788,15 +847,15 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "404":
           description: No record found
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "500":
           description: Database error
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Get the single pipeline
       tags:
       - pipelines
@@ -826,11 +885,11 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Update pipeline
       tags:
       - pipelines
@@ -872,15 +931,15 @@ paths:
         "400":
           description: Error in request
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "404":
           description: No records found
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "500":
           description: Database error
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Get all projects
       tags:
       - projects
@@ -905,11 +964,11 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Create new project
       tags:
       - projects
@@ -932,15 +991,15 @@ paths:
         "200":
           description: Delete message
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Delete project
       tags:
       - projects
@@ -962,15 +1021,15 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "404":
           description: No record found
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "500":
           description: Database error
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Get the single project
       tags:
       - projects
@@ -1000,14 +1059,56 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Update project
       tags:
       - projects
+  /queue-elems:
+    get:
+      consumes:
+      - application/json
+      operationId: all-queue-elems
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: size
+        type: integer
+      - description: Order by field
+        in: query
+        name: order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of queue elems
+          schema:
+            items:
+              $ref: '#/definitions/queue.QueueElem'
+            type: array
+        "400":
+          description: Error in request
+          schema:
+            $ref: '#/definitions/dao.Message'
+        "404":
+          description: No records found
+          schema:
+            $ref: '#/definitions/dao.Message'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/dao.Message'
+      summary: Get all queue elems
+      tags:
+      - queue-elem
   /secrets:
     get:
       consumes:
@@ -1050,15 +1151,15 @@ paths:
         "400":
           description: Error in request
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "404":
           description: No records found
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "500":
           description: Database error
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Get all secrets
       tags:
       - secrets
@@ -1083,11 +1184,11 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Create new secret
       tags:
       - secrets
@@ -1106,15 +1207,15 @@ paths:
         "200":
           description: Delete message
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Delete secret
       tags:
       - secrets
@@ -1144,11 +1245,11 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Update secret
       tags:
       - secrets
@@ -1186,15 +1287,15 @@ paths:
         "400":
           description: Error in request
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "404":
           description: No records found
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "500":
           description: Database error
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Get all users
       tags:
       - users
@@ -1219,11 +1320,11 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Create new user
       tags:
       - users
@@ -1242,15 +1343,15 @@ paths:
         "200":
           description: Delete message
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Delete user
       tags:
       - users
@@ -1272,15 +1373,15 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "404":
           description: No record found
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "500":
           description: Database error
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Get the single user
       tags:
       - users
@@ -1310,11 +1411,11 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Update user
       tags:
       - users
@@ -1360,15 +1461,15 @@ paths:
         "400":
           description: Error in request
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "404":
           description: No records found
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "500":
           description: Database error
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Get all variables
       tags:
       - variables
@@ -1393,11 +1494,11 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Create new variable
       tags:
       - variables
@@ -1416,15 +1517,15 @@ paths:
         "200":
           description: Delete message
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Delete variable
       tags:
       - variables
@@ -1454,11 +1555,11 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Update variable
       tags:
       - variables
@@ -1514,15 +1615,15 @@ paths:
         "400":
           description: Error in request
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "404":
           description: No records found
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "500":
           description: Database error
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Get all workers
       tags:
       - workers
@@ -1547,11 +1648,11 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Create new worker
       tags:
       - workers
@@ -1570,15 +1671,15 @@ paths:
         "200":
           description: Delete message
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Delete worker
       tags:
       - workers
@@ -1600,15 +1701,15 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "404":
           description: No record found
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "500":
           description: Database error
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Get the single worker
       tags:
       - workers
@@ -1638,11 +1739,11 @@ paths:
         "400":
           description: Error in params
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
         "501":
           description: Endpoint not implemented
           schema:
-            $ref: '#/definitions/util.Message'
+            $ref: '#/definitions/dao.Message'
       summary: Update worker
       tags:
       - workers

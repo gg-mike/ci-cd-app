@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/gg-mike/ci-cd-app/backend/cmd/server/schedulerImpl"
+	"github.com/gg-mike/ci-cd-app/backend/cmd/server/queue"
+	schedulerImpl "github.com/gg-mike/ci-cd-app/backend/cmd/server/scheduler"
 	_ "github.com/gg-mike/ci-cd-app/backend/docs/server"
 	"github.com/gg-mike/ci-cd-app/backend/internal/controller"
 	"github.com/gg-mike/ci-cd-app/backend/internal/db"
@@ -35,6 +36,8 @@ func init() {
 		logger.Fatal("main").Msgf("Error while connecting to database: %v", err)
 	}
 
+	db.Get().AutoMigrate(&queue.QueueElem{})
+
 	vaultAddr, err := sys.GetRequiredEnv("VAULT_ADDR")
 	if err != nil {
 		logger.Fatal("main").Msgf("Missing VAULT_ADDR variable")
@@ -49,9 +52,6 @@ func init() {
 	if err != nil {
 		logger.Fatal("main").Msgf("Error while connecting to vault: %v", err)
 	}
-
-	schedulerCtx := schedulerImpl.Context{}
-	scheduler.Init(schedulerCtx)
 }
 
 // @title       CI/CD Application - Server API
@@ -85,6 +85,16 @@ func main() {
 	router.InitUserGroup(rg)
 	router.InitVariableGroup(rg)
 	router.InitWorkerGroup(rg)
+
+	queue.Router(rg)
+
+	schedulerImpl.Init()
+
+	scheduler.Init(&schedulerImpl.Context{})
+	go schedulerImpl.Run()
+
+	// TODO: check if every saved worker is working
+	// TODO: clear any remains of previous builds which were running while app was exiting
 
 	probe.Ready()
 

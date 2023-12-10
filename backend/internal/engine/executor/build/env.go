@@ -98,10 +98,12 @@ func (ctx Context) createVariablesStep() (model.PipelineConfigStep, []string, er
 func prepareStepCommands(system string, env map[string]envInstance, prefix string) ([]string, []string, error) {
 	var templateEnv, templateFile, templateFileDelete string
 	// TODO: support for over OS
-	if system == "Linux" {
+	if strings.ToLower(system) == "linux" {
 		templateEnv = "export %s%s=\"%s\""
 		templateFile = "export %s%s=\"%s\" && echo '%s' > %s"
 		templateFileDelete = "rm -f %s"
+	} else {
+		panic(system + "is not supported")
 	}
 	commands := []string{}
 	cleanUpCommands := []string{}

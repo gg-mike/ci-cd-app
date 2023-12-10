@@ -6,7 +6,8 @@ import (
 
 type Scheduler interface {
 	Schedule(buildID uuid.UUID)
-	Cancel(buildID uuid.UUID) error
+	Finished(any)
+	ChangeInWorkers()
 }
 
 var scheduler Scheduler

@@ -79,6 +79,7 @@ func (m *Build) BeforeUpdate(tx *gorm.DB) error {
 	switch prev.(Build).Status {
 	case BuildScheduled, BuildRunning:
 		tx.Statement.SetColumn("status", BuildCanceled)
+		go scheduler.Get().Finished(m.ID)
 		return nil
 	default:
 		return fmt.Errorf("cannot change status of build from [%s] to [%s]",
